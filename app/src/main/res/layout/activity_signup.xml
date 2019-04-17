@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:padding="10dp"
+        android:layout_height="match_parent"
+        tools:context=".SignupActivity"
+        android:background="@color/colorPrimaryDarkk">
+
+    <android.support.v4.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        <android.support.constraint.ConstraintLayout android:layout_width="match_parent"
+                                                     android:layout_height="match_parent">
+
+    <EditText
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:inputType="textPersonName"
+            android:ems="10"
+            android:paddingLeft="5dp"
+            android:background="@color/colorPrimary"
+
+            android:textColorHint="@color/textColor2"
+            android:textColor="@color/textColor2"
+            android:id="@+id/signup_user_name" android:layout_marginTop="40dp"
+            app:layout_constraintTop_toTopOf="parent" app:layout_constraintStart_toStartOf="parent"
+            android:hint="User Name" app:layout_constraintEnd_toEndOf="parent"
+    />
+    <EditText
+
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:inputType="textPersonName"
+            android:ems="10"
+            android:paddingLeft="5dp"
+            android:background="@color/colorPrimary"
+            android:textColorHint="@color/textColor2"
+            android:textColor="@color/textColor2"
+            android:id="@+id/signup_email"
+            app:layout_constraintStart_toStartOf="@+id/signup_user_name"
+            app:layout_constraintEnd_toEndOf="@+id/signup_user_name"
+            android:layout_marginTop="40dp"
+            app:layout_constraintTop_toBottomOf="@+id/signup_user_name"
+            android:hint="Email"
+            app:layout_constraintHorizontal_bias="0.0"/>
+    <EditText
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:inputType="textPassword"
+            android:ems="10"
+            android:paddingLeft="5dp"
+            android:background="@color/colorPrimary"
+            android:textColorHint="@color/textColor2"
+            android:textColor="@color/textColor2"
+            android:id="@+id/signup_password"
+            app:layout_constraintStart_toStartOf="@+id/signup_email"
+            app:layout_constraintEnd_toEndOf="@+id/signup_email" android:layout_marginTop="48dp"
+            app:layout_constraintTop_toBottomOf="@+id/signup_email" app:layout_constraintHorizontal_bias="0.0"
+            android:hint="password"/>
+    <EditText
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:inputType="textPassword"
+            android:ems="10"
+            android:paddingLeft="5dp"
+            android:background="@color/colorPrimary"
+            android:textColorHint="@color/textColor2"
+            android:textColor="@color/textColor2"
+            android:id="@+id/signup_cnfirm_password"
+            app:layout_constraintStart_toStartOf="@+id/signup_password"
+            app:layout_constraintEnd_toEndOf="@+id/signup_password"
+            android:layout_marginTop="56dp"
+            app:layout_constraintTop_toBottomOf="@+id/signup_password"
+            app:layout_constraintHorizontal_bias="0.0"
+            android:hint="confirm password"/>
+
+    <TextView
+
+
+            android:text="Choose a username"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:textAllCaps="true"
+            android:textColor="@color/textColor"
+            android:id="@+id/textView"
+            app:layout_constraintStart_toStartOf="@+id/signup_user_name"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toTopOf="@+id/signup_user_name"/>
+    <TextView
+            android:text="Enter your email address"
+            android:layout_width="wrap_content"
+            android:layout_height="20dp"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:textAllCaps="true"
+            android:textColor="@color/textColor"
+            android:id="@+id/textView4"
+            app:layout_constraintStart_toStartOf="@+id/signup_email"
+            android:layout_marginBottom="8dp" app:layout_constraintBottom_toTopOf="@+id/signup_email"/>
+    <TextView
+            android:text="choose password"
+            android:layout_width="wrap_content"
+            android:layout_height="20dp"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:textAllCaps="true"
+            android:textColor="@color/textColor"
+            android:id="@+id/textView5" app:layout_constraintStart_toStartOf="@+id/signup_password"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toTopOf="@+id/signup_password"/>
+    <TextView
+            android:text="cnfirm password"
+            android:layout_width="wrap_content"
+            android:layout_height="20dp"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:textAllCaps="true"
+            android:textColor="@color/textColor"
+            android:id="@+id/textView6" app:layout_constraintStart_toStartOf="@+id/signup_cnfirm_password"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toTopOf="@+id/signup_cnfirm_password"/>
+
+
+    <Button
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/signup_button"
+            android:text="signup"
+            android:textColor="@color/textColor2"
+            android:background="@drawable/buttons_border"
+            android:layout_marginTop="24dp"
+            app:layout_constraintTop_toBottomOf="@+id/checkBox"
+            app:layout_constraintStart_toStartOf="@+id/checkBox"
+            app:layout_constraintEnd_toEndOf="@+id/signup_cnfirm_password" android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp" app:layout_constraintHorizontal_bias="0.0"/>
+    <CheckBox
+            android:text="Agree to terms and conditions"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/checkBox"
+            android:textColor="@color/textColor2"
+
+            app:layout_constraintStart_toStartOf="@+id/signup_cnfirm_password"
+            android:layout_marginLeft="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@+id/signup_cnfirm_password"/>
+    <Button
+            android:text="login with instagram"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/insta_button"
+            android:textColor="@color/textColor2"
+
+            android:background="@drawable/insta_gradient"
+            app:layout_constraintStart_toStartOf="@+id/signup_button"
+            app:layout_constraintEnd_toEndOf="@+id/signup_button" android:layout_marginTop="16dp"
+            app:layout_constraintTop_toBottomOf="@+id/signup_button" app:layout_constraintHorizontal_bias="0.0"/>
+        </android.support.constraint.ConstraintLayout>
+    </android.support.v4.widget.NestedScrollView>
+
+</android.support.constraint.ConstraintLayout>
