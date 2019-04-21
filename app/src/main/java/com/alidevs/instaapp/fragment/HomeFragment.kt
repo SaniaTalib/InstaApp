@@ -14,6 +14,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 
 import com.alidevs.instaapp.R
+import com.alidevs.instaapp.adapter.FullPageAdapter
 import com.alidevs.instaapp.adapter.NewsAdapter
 import kotlinx.android.synthetic.main.fragment_home.*
 
@@ -42,22 +43,21 @@ class HomeFragment : Fragment() {
         recyclerView = root.findViewById(R.id.grid_view) as RecyclerView
         fullPage = root.findViewById(R.id.full_page)
         //recyclerView.layoutManager = LinearLayoutManager(context)
-        recyclerView.layoutManager = LinearLayoutManager(context)
-        recyclerView.adapter = context?.let { NewsAdapter(it) }
+        recyclerView.layoutManager = GridLayoutManager(context,3)
+        recyclerView.adapter = context?.let { FullPageAdapter(it) }
 
 
         //Click Events
         galleryActive.setOnClickListener {
             galleryActive.visibility = View.GONE
             galleryInactive.visibility = View.VISIBLE
-            recyclerView.visibility = View.VISIBLE
-            recyclerView.visibility = View.VISIBLE
-            fullPage.visibility = View.GONE
+            recyclerView.visibility = View.GONE
+            fullPage.visibility = View.VISIBLE
         }
         galleryInactive.setOnClickListener {
             galleryActive.visibility = View.VISIBLE
             galleryInactive.visibility = View.GONE
-            recyclerView.visibility = View.GONE
+            fullPage.visibility = View.GONE
             recyclerView.visibility = View.VISIBLE
         }
         pagerActive.setOnClickListener {
