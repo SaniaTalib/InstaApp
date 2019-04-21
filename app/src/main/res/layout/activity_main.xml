@@ -16,6 +16,24 @@
             app:titleTextColor="#fff"
             app:subtitleTextColor="#f5fbff"
             android:padding="1dp"
-    />
+            app:layout_constraintTop_toTopOf="parent" app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+        <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Toolbar Title"
+                android:src="@drawable/ic_logo"
+                android:layout_gravity="center"
+                android:id="@+id/toolbar_title"/>
+    </android.support.v7.widget.Toolbar>
+
+    <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/click_me"
+            android:text="Hello Popu"
+            tools:layout_editor_absoluteY="449dp"
+            tools:layout_editor_absoluteX="151dp"
+            />
 
 </android.support.constraint.ConstraintLayout>
