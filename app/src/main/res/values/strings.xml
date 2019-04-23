@@ -18,4 +18,17 @@
     <string name="signup_email">Enter a valid email address</string>
     <string name="signup_username">SpeedySteve?</string>
     <string name="menu">Menu</string>
+
+
+
+    <!-- Instagram API Strings -->
+    <string name="client_id">ccfeba403b9543e2b6fff98956cbdc6d</string>
+    <string name="callback_url">https://instagram.com/</string>
+    <string name="base_url">https://api.instagram.com/</string>
+    <string name="redirect_url">https://instagram.com/</string>
+    <string name="get_user_info_url">https://api.instagram.com/v1/users/self/?access_token=</string>
+
+
+    <string name="ABC">ABC</string>
+
 </resources>

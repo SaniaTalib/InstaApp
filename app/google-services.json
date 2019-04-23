@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "1012008653647",
+    "firebase_url": "https://fir-project-8d038.firebaseio.com",
+    "project_id": "fir-project-8d038",
+    "storage_bucket": "fir-project-8d038.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1012008653647:android:d2a8743ebc3409d9",
+        "android_client_info": {
+          "package_name": "com.alidevs.instaapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1012008653647-jp1obsvrst2jjiisbgqrbpeco2ta5brd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCEeLqwee2q80dILplaxHXDBC4n3VRo_lY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1012008653647-jp1obsvrst2jjiisbgqrbpeco2ta5brd.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

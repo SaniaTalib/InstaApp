@@ -10,25 +10,16 @@ import kotlinx.android.synthetic.main.news_item.view.*
 
 class FullPageAdapter(var context: Context) : RecyclerView.Adapter<FullPageAdapter.ViewHolder>() {
 
-    private lateinit var view: View
-
-    inner class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
-        init {
-            view = itemView.findViewById(R.id.divider)
-        }
-    }
+    inner class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_mywatches, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_full_page, parent, false)
         return ViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.setIsRecyclable(false)
-        if (position==1){
-            holder.itemView.divider.visibility = View.GONE
-        }
     }
 
-    override fun getItemCount() = 10
+    override fun getItemCount() = 13
 }
