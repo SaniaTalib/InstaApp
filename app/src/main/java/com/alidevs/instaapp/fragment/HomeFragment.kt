@@ -1,10 +1,15 @@
 package com.alidevs.instaapp.fragment
 
+import android.Manifest
 import android.app.Activity
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.support.constraint.ConstraintLayout
+import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -15,15 +20,26 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.Toast
 import com.alidevs.instaapp.R
+import com.alidevs.instaapp.activity.LoginActivity
 import com.alidevs.instaapp.adapter.FullPageAdapter
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
+import com.google.firebase.storage.UploadTask
 import com.theartofdev.edmodo.cropper.CropImage
+import id.zelory.compressor.Compressor
+import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.IOException
+import java.util.*
+import kotlin.collections.HashMap
 
 class HomeFragment : Fragment() {
+
+    val TAG = HomeFragment::getTag
 
     private lateinit var galleryInactive : ImageView
     private lateinit var uploadImage: ImageView
@@ -34,14 +50,13 @@ class HomeFragment : Fragment() {
     private lateinit var contestActive : ImageView
     private lateinit var recyclerView : RecyclerView
     private lateinit var fullPage : ConstraintLayout
-
-
     private lateinit var user_id: String
-
     private var mainUril: Uri? = null
     private lateinit var storageReference : StorageReference
     private lateinit var firestore: FirebaseFirestore
     private lateinit var firebaseAuth: FirebaseAuth
+    private lateinit var compressedImageFile: Bitmap
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -69,10 +84,25 @@ class HomeFragment : Fragment() {
 
         //Click Events
         uploadImage.setOnClickListener {
-            CropImage.activity()
-                .setMinCropResultSize(512, 512)
-                .setAspectRatio(1, 1)
-                .start(context!!, this)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (ActivityCompat.checkSelfPermission(
+                        context!!.applicationContext,
+                        Manifest.permission.READ_EXTERNAL_STORAGE
+                    ) != PackageManager.PERMISSION_GRANTED
+                ) {
+                    Toast.makeText(context, "Permission Denied", Toast.LENGTH_SHORT).show()
+                    ActivityCompat.requestPermissions(
+                        this.activity!!,
+                        arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 1
+                    )
+                } else {
+                    selectImage()
+                    Toast.makeText(context, "Permission Granted", Toast.LENGTH_SHORT).show()
+                }
+            } else {
+                selectImage()
+                Toast.makeText(context, "Permission Granted", Toast.LENGTH_SHORT).show()
+            }
         }
 
         galleryActive.setOnClickListener {
@@ -107,6 +137,13 @@ class HomeFragment : Fragment() {
         return root
     }
 
+    private fun selectImage() {
+        CropImage.activity()
+            .setMinCropResultSize(512, 512)
+            .setAspectRatio(1, 1)
+            .start(context!!, this)
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
@@ -116,7 +153,7 @@ class HomeFragment : Fragment() {
                 mainUril = result.uri
                 //img_post.setImageURI(mainUril)
                 //user_profile.setImageURI(mainUril)
-                var img_path = storageReference.child("profile_images").child("$user_id.jpg")
+                /*var img_path = storageReference.child("profile_images").child("$user_id.jpg")
 
                 img_path.putFile(mainUril!!).addOnFailureListener {
                     Toast.makeText(context, "upload failed: " + it.message, Toast.LENGTH_SHORT).show()
@@ -125,12 +162,120 @@ class HomeFragment : Fragment() {
                     img_path.downloadUrl.addOnCompleteListener { taskSnapshot ->
                         storeDataToFireStore(taskSnapshot)
                     }
-                }
-
+                }*/
+                compressImage()
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 val error = result.error
             }
         }
+    }
+
+    private fun compressImage() {
+        val randonName = UUID.randomUUID().toString()
+        val newimage = File(mainUril!!.path)
+        try {
+            compressedImageFile = Compressor(this.activity)
+                .setMaxHeight(720)
+                .setMaxWidth(720)
+                .setQuality(50)
+                .compressToBitmap(newimage)
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+
+        val byte = ByteArrayOutputStream()
+        compressedImageFile.compress(Bitmap.CompressFormat.JPEG, 100, byte)
+        val imagedata = byte.toByteArray()
+
+        val ref = storageReference.child("post_images").child("$randonName.jpg")
+        val filepath = ref.putBytes(imagedata)
+        filepath.addOnFailureListener {
+            Toast.makeText(this.activity, "Error: ${it.message}", Toast.LENGTH_SHORT).show()
+        }.addOnSuccessListener {
+            val downloadurl = ref.downloadUrl
+            if (it.task.isSuccessful) {
+                val newthumbfile = File(mainUril!!.path)
+                try {
+                    compressedImageFile = Compressor(this.activity)
+                        .setMaxHeight(100)
+                        .setMaxWidth(100)
+                        .setQuality(1)
+                        .compressToBitmap(newthumbfile)
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                }
+                val byte = ByteArrayOutputStream()
+                compressedImageFile.compress(Bitmap.CompressFormat.JPEG, 100, byte)
+                val thumbdata = byte.toByteArray()
+                val ref = storageReference.child("post_images").child("$randonName.jpg")
+                val filepath = ref.putBytes(imagedata)
+
+                filepath.addOnFailureListener {
+                    Toast.makeText(this.activity, "Error: ${it.message}", Toast.LENGTH_SHORT).show()
+                }.addOnSuccessListener {
+                    val downloadurl = ref.downloadUrl
+                    if (it.task.isSuccessful) {
+                        val newthumbfile = File(mainUril!!.path)
+                        try {
+                            compressedImageFile = Compressor(this.activity)
+                                .setMaxHeight(100)
+                                .setMaxWidth(100)
+                                .setQuality(1)
+                                .compressToBitmap(newthumbfile)
+                        } catch (e: IOException) {
+                            e.printStackTrace()
+                        }
+                        val byte = ByteArrayOutputStream()
+                        compressedImageFile.compress(Bitmap.CompressFormat.JPEG, 100, byte)
+                        val thumbdata = byte.toByteArray()
+
+                        val uploadTask: UploadTask = storageReference.child("post_images/thumbs")
+                            .child("$randonName.jpg").putBytes(thumbdata)
+
+                        uploadTask.addOnFailureListener {
+                            Toast.makeText(this.activity, "Error: ${it.message}", Toast.LENGTH_SHORT).show()
+                        }.addOnSuccessListener {
+                            val downloadthumburl = downloadurl.result
+                            val items = java.util.HashMap<String, Any>()
+                            items["image_url"] = downloadurl.result.toString()
+                            items["image_thumb"] = downloadthumburl.toString()
+                            /*items["post_title"] = post_title.text.toString()
+                            items["post_description"] = post_description.text.toString()
+                            */
+                            items["user_id"] = user_id
+                            items["timestamp"] = FieldValue.serverTimestamp()
+
+                            firestore.collection("Posts").add(items)
+                                .addOnCompleteListener {
+                                    if (it.isSuccessful) {
+                                        Toast.makeText(context, "Post was added", Toast.LENGTH_LONG).show()
+                                        /* val intent = Intent(activity, MainActivity::class.java)
+                                         activity!!.startActivity(intent)
+                                         activity!!.finish()*/
+                                    }
+                                }.addOnFailureListener {
+                                    Toast.makeText(context, "FireStore Error: ${it.message}", Toast.LENGTH_SHORT).show()
+                                }
+                        }
+                    }
+                }
+            }
+        }
+
+    }
+
+    override fun onStart() {
+        super.onStart()
+        val currentUser = firebaseAuth.currentUser
+        if (currentUser == null) {
+            sendToLogin()
+        }
+    }
+
+    private fun sendToLogin() {
+        val intent = Intent(activity!!, LoginActivity::class.java)
+        startActivity(intent)
+        activity!!.finish()
     }
 
     private fun storeDataToFireStore(taskSnapShot: Task<Uri>?) {
@@ -146,8 +291,7 @@ class HomeFragment : Fragment() {
         val items = HashMap<String, Any>()
         items["user_id"] = user_id
         items["img_path"] = url.toString()
-        firestore.collection("Posts").document(user_id).collection("images").document()
-            .set(items)
+        firestore.collection("Posts").document().set(items)
             .addOnCompleteListener {
                 if (it.isSuccessful){
                     /*val intent = Intent(this@Account, MainActivity::class.java)

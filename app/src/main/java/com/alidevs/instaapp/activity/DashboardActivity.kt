@@ -7,15 +7,13 @@ import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
+import android.view.View
 import com.alidevs.instaapp.R
-import com.alidevs.instaapp.fragment.HomeFragment
-import kotlinx.android.synthetic.main.activity_dashboard2.*
-import kotlinx.android.synthetic.main.app_bar_dashboard.*
 import com.alidevs.instaapp.adapter.ViewPagerAdapter
 import com.alidevs.instaapp.fragment.MyWatchesFragment
+import kotlinx.android.synthetic.main.activity_dashboard2.*
+import kotlinx.android.synthetic.main.app_bar_dashboard.*
 import kotlinx.android.synthetic.main.content_dashboard.*
-import kotlinx.android.synthetic.main.nav_header_dashboard.*
-
 
 class DashboardActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -73,6 +71,8 @@ class DashboardActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         when (item.itemId) {
             R.id.my_watches -> {
                 setupHomeFragment(MyWatchesFragment())
+                tablayout.visibility = View.GONE
+                //constraintLayout.visibility = View.GONE
             }
             R.id.settings -> {
             }
