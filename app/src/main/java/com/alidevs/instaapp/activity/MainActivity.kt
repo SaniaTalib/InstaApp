@@ -19,6 +19,4 @@ class MainActivity : AppCompatActivity() {
         //actionBar.setLogo(R.drawable.ic_logo)
         actionBar.setDisplayUseLogoEnabled(true)
     }
-
-
 }

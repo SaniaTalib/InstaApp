@@ -8,10 +8,10 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.support.constraint.ConstraintLayout
 import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
 import android.support.v7.widget.GridLayoutManager
+import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.LayoutInflater
@@ -22,6 +22,7 @@ import android.widget.Toast
 import com.alidevs.instaapp.R
 import com.alidevs.instaapp.activity.LoginActivity
 import com.alidevs.instaapp.adapter.FullPageAdapter
+import com.alidevs.instaapp.adapter.GridViewAdapter
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
@@ -39,7 +40,7 @@ import kotlin.collections.HashMap
 
 class HomeFragment : Fragment() {
 
-    val TAG = HomeFragment::getTag
+    val TAG = HomeFragment::getTag.toString()
 
     private lateinit var galleryInactive : ImageView
     private lateinit var uploadImage: ImageView
@@ -49,7 +50,7 @@ class HomeFragment : Fragment() {
     private lateinit var contestInactive : ImageView
     private lateinit var contestActive : ImageView
     private lateinit var recyclerView : RecyclerView
-    private lateinit var fullPage : ConstraintLayout
+    private lateinit var fullPage : RecyclerView
     private lateinit var user_id: String
     private var mainUril: Uri? = null
     private lateinit var storageReference : StorageReference
@@ -70,17 +71,18 @@ class HomeFragment : Fragment() {
         contestInactive = root.findViewById(R.id.award_inactive)
         contestActive = root.findViewById(R.id.award_active)
         recyclerView = root.findViewById(R.id.grid_view) as RecyclerView
-        fullPage = root.findViewById(R.id.full_page)
+        fullPage = root.findViewById(R.id.full_page) as RecyclerView
         uploadImage = root.findViewById(R.id.upload_img)
         //recyclerView.layoutManager = LinearLayoutManager(context)
         recyclerView.layoutManager = GridLayoutManager(context,3)
-        recyclerView.adapter = context?.let { FullPageAdapter(it) }
+        recyclerView.adapter = context?.let { GridViewAdapter(it) }
+        fullPage.layoutManager = LinearLayoutManager(context)
+        fullPage.adapter = context?.let { FullPageAdapter(it) }
 
         firebaseAuth = FirebaseAuth.getInstance()
         user_id = firebaseAuth.currentUser!!.uid
         firestore = FirebaseFirestore.getInstance()
         storageReference = FirebaseStorage.getInstance().reference
-
 
         //Click Events
         uploadImage.setOnClickListener {
@@ -166,6 +168,7 @@ class HomeFragment : Fragment() {
                 compressImage()
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 val error = result.error
+                Log.d(TAG,"$error")
             }
         }
     }

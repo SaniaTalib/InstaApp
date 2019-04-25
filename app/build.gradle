@@ -36,6 +36,9 @@ dependencies {
     implementation 'com.android.support:multidex:1.0.3'
     implementation 'com.wanghong.kostagram:instagram-api-kotlin:0.0.1'
 
+    //Rss Parser
+    implementation 'com.prof.rssparser:rssparser:1.4.4'
+
     //Image cropper, compressor and Glide
     implementation 'com.theartofdev.edmodo:android-image-cropper:2.6.0'
     implementation 'com.github.bumptech.glide:glide:4.8.0'
