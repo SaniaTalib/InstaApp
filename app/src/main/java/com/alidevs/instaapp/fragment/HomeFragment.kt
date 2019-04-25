@@ -12,6 +12,7 @@ import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.PagerSnapHelper
 import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.LayoutInflater
@@ -23,6 +24,7 @@ import com.alidevs.instaapp.R
 import com.alidevs.instaapp.activity.LoginActivity
 import com.alidevs.instaapp.adapter.FullPageAdapter
 import com.alidevs.instaapp.adapter.GridViewAdapter
+import com.alidevs.instaapp.utils.SnapHelperOneByOne
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
@@ -83,6 +85,11 @@ class HomeFragment : Fragment() {
         user_id = firebaseAuth.currentUser!!.uid
         firestore = FirebaseFirestore.getInstance()
         storageReference = FirebaseStorage.getInstance().reference
+
+
+        /*******************HOME FRAGMENT**********************/
+        val linearSnapHelper = PagerSnapHelper()
+        linearSnapHelper.attachToRecyclerView(fullPage)
 
         //Click Events
         uploadImage.setOnClickListener {
