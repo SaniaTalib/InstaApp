@@ -24,11 +24,11 @@ import com.alidevs.instaapp.R
 import com.alidevs.instaapp.activity.LoginActivity
 import com.alidevs.instaapp.adapter.FullPageAdapter
 import com.alidevs.instaapp.adapter.GridViewAdapter
-import com.alidevs.instaapp.utils.SnapHelperOneByOne
-import com.google.android.gms.tasks.Task
+import com.alidevs.instaapp.model.PostsModel
+import com.alidevs.instaapp.utils.AppPreferences
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FieldValue
-import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.*
+import com.google.firebase.firestore.EventListener
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.UploadTask
@@ -38,27 +38,30 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.IOException
 import java.util.*
-import kotlin.collections.HashMap
+import kotlin.collections.ArrayList
 
 class HomeFragment : Fragment() {
 
     val TAG = HomeFragment::getTag.toString()
+    private lateinit var utils: AppPreferences
 
-    private lateinit var galleryInactive : ImageView
+    private lateinit var galleryInactive: ImageView
     private lateinit var uploadImage: ImageView
-    private lateinit var galleryActive : ImageView
-    private lateinit var pagerActive : ImageView
-    private lateinit var pagerInactive : ImageView
-    private lateinit var contestInactive : ImageView
-    private lateinit var contestActive : ImageView
-    private lateinit var recyclerView : RecyclerView
-    private lateinit var fullPage : RecyclerView
+    private lateinit var galleryActive: ImageView
+    private lateinit var pagerActive: ImageView
+    private lateinit var pagerInactive: ImageView
+    private lateinit var contestInactive: ImageView
+    private lateinit var contestActive: ImageView
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var fullPage: RecyclerView
     private lateinit var user_id: String
     private var mainUril: Uri? = null
-    private lateinit var storageReference : StorageReference
+    private lateinit var storageReference: StorageReference
     private lateinit var firestore: FirebaseFirestore
     private lateinit var firebaseAuth: FirebaseAuth
     private lateinit var compressedImageFile: Bitmap
+    private lateinit var posts_list: MutableList<PostsModel>
+    private var postsAdaptert: FullPageAdapter? = null
 
 
     override fun onCreateView(
@@ -75,21 +78,23 @@ class HomeFragment : Fragment() {
         recyclerView = root.findViewById(R.id.grid_view) as RecyclerView
         fullPage = root.findViewById(R.id.full_page) as RecyclerView
         uploadImage = root.findViewById(R.id.upload_img)
+        posts_list = ArrayList()
         //recyclerView.layoutManager = LinearLayoutManager(context)
-        recyclerView.layoutManager = GridLayoutManager(context,3)
-        recyclerView.adapter = context?.let { GridViewAdapter(it) }
-        fullPage.layoutManager = LinearLayoutManager(context)
-        fullPage.adapter = context?.let { FullPageAdapter(it) }
-
         firebaseAuth = FirebaseAuth.getInstance()
         user_id = firebaseAuth.currentUser!!.uid
         firestore = FirebaseFirestore.getInstance()
         storageReference = FirebaseStorage.getInstance().reference
+        utils = AppPreferences(context!!)
 
+        loadPosts()
 
         /*******************HOME FRAGMENT**********************/
         val linearSnapHelper = PagerSnapHelper()
         linearSnapHelper.attachToRecyclerView(fullPage)
+        fullPage.layoutManager = LinearLayoutManager(context)
+        fullPage.adapter = context?.let { FullPageAdapter(posts_list) }
+        recyclerView.layoutManager = GridLayoutManager(context,3)
+        recyclerView.adapter = context?.let { GridViewAdapter(posts_list) }
 
         //Click Events
         uploadImage.setOnClickListener {
@@ -160,22 +165,10 @@ class HomeFragment : Fragment() {
             if (resultCode == Activity.RESULT_OK) {
                 user_id = firebaseAuth.currentUser!!.uid
                 mainUril = result.uri
-                //img_post.setImageURI(mainUril)
-                //user_profile.setImageURI(mainUril)
-                /*var img_path = storageReference.child("profile_images").child("$user_id.jpg")
-
-                img_path.putFile(mainUril!!).addOnFailureListener {
-                    Toast.makeText(context, "upload failed: " + it.message, Toast.LENGTH_SHORT).show()
-                }.addOnSuccessListener { taskSnapshot ->
-                    // success
-                    img_path.downloadUrl.addOnCompleteListener { taskSnapshot ->
-                        storeDataToFireStore(taskSnapshot)
-                    }
-                }*/
                 compressImage()
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 val error = result.error
-                Log.d(TAG,"$error")
+                Log.d(TAG, "$error")
             }
         }
     }
@@ -247,21 +240,18 @@ class HomeFragment : Fragment() {
                         }.addOnSuccessListener {
                             val downloadthumburl = downloadurl.result
                             val items = java.util.HashMap<String, Any>()
+                            //DocumentReference userRef = db.collection("company").document("users");
+                            //val userRef = firestore.collection("users/$user_id")
                             items["image_url"] = downloadurl.result.toString()
                             items["image_thumb"] = downloadthumburl.toString()
-                            /*items["post_title"] = post_title.text.toString()
-                            items["post_description"] = post_description.text.toString()
-                            */
-                            items["user_id"] = user_id
+                            items["reference"] = downloadthumburl.toString()
+                            //items["reference"] = userRef.toString()
                             items["timestamp"] = FieldValue.serverTimestamp()
 
                             firestore.collection("Posts").add(items)
                                 .addOnCompleteListener {
                                     if (it.isSuccessful) {
                                         Toast.makeText(context, "Post was added", Toast.LENGTH_LONG).show()
-                                        /* val intent = Intent(activity, MainActivity::class.java)
-                                         activity!!.startActivity(intent)
-                                         activity!!.finish()*/
                                     }
                                 }.addOnFailureListener {
                                     Toast.makeText(context, "FireStore Error: ${it.message}", Toast.LENGTH_SHORT).show()
@@ -288,31 +278,29 @@ class HomeFragment : Fragment() {
         activity!!.finish()
     }
 
-    private fun storeDataToFireStore(taskSnapShot: Task<Uri>?) {
-        val url: Uri
+    private fun loadPosts() {
+        if (firebaseAuth.currentUser != null) {
+            firestore = FirebaseFirestore.getInstance()
+            val nextQuery = firestore.collection("Posts").orderBy("timestamp", Query.Direction.DESCENDING)
+            nextQuery.addSnapshotListener(object : EventListener<QuerySnapshot> {
+                override fun onEvent(documentSnapshots: QuerySnapshot?, e: FirebaseFirestoreException?) {
+                    if (documentSnapshots != null) {
+                        if (!documentSnapshots.isEmpty) {
+                            for (doc in documentSnapshots.documentChanges) {
 
-        if (taskSnapShot != null){
-            url = taskSnapShot.result!!
-        }else{
-            url = mainUril!!
+                                if (doc.type === DocumentChange.Type.ADDED) {
+                                    val pojo = doc.document.toObject(PostsModel::class.java)
+                                    posts_list.add(pojo)
+                                    fullPage.adapter?.notifyDataSetChanged()
+                                }
+
+                            }
+                        }
+                    }
+                }
+            })
+
         }
 
-        Log.d("FireTAG","$url")
-        val items = HashMap<String, Any>()
-        items["user_id"] = user_id
-        items["img_path"] = url.toString()
-        firestore.collection("Posts").document().set(items)
-            .addOnCompleteListener {
-                if (it.isSuccessful){
-                    /*val intent = Intent(this@Account, MainActivity::class.java)
-                    startActivity(intent)
-                    finish()
-                    setup_progress.visibility = View.GONE*/
-                    Toast.makeText(context,"Account Updated Successfully..",Toast.LENGTH_SHORT).show()
-                }else{
-                    Toast.makeText(context, "Fire Store Error: " + it.exception!!.message, Toast.LENGTH_SHORT).show()
-                    //setup_progress.visibility = View.GONE
-                }
-            }
     }
 }

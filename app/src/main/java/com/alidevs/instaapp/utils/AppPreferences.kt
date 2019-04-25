@@ -2,6 +2,9 @@ package com.alidevs.instaapp.utils
 
 import android.content.Context
 import android.content.SharedPreferences
+import java.text.DateFormat.getDateTimeInstance
+import java.text.SimpleDateFormat
+import java.util.*
 
 /*public class AppPreferences {
 
@@ -31,6 +34,8 @@ class AppPreferences(context: Context) {
         editor = preferences.edit()
     }
 
+
+
     fun putString(key: String, value: String) {
         var editor = preferences.edit()
         editor.putString(key, value)
@@ -39,6 +44,11 @@ class AppPreferences(context: Context) {
 
     fun getString(key: String): String? {
         return preferences.getString(key, null)
+    }
+    fun getDateTime(): String {
+        val dateFormat = getDateTimeInstance()
+        val date = Date()
+        return dateFormat.format(date)
     }
     /* fun savedata(key: String, `val`: String) {
         editor.putString(key, `val`).commit()
