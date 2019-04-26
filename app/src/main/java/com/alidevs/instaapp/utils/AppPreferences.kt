@@ -2,24 +2,12 @@ package com.alidevs.instaapp.utils
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.os.Build
 import java.text.DateFormat.getDateTimeInstance
 import java.text.SimpleDateFormat
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.*
-
-/*public class AppPreferences {
-
-    private lateinit var preferences:SharedPreferences
-
-
-
-    fun clear()
-    {
-        var editor = preferences.edit()
-        editor.clear()
-        editor.apply()
-    }
-}*/
-
 
 class AppPreferences(context: Context) {
     var preferences: SharedPreferences
@@ -45,10 +33,18 @@ class AppPreferences(context: Context) {
     fun getString(key: String): String? {
         return preferences.getString(key, null)
     }
-    fun getDateTime(): String {
-        val dateFormat = getDateTimeInstance()
-        val date = Date()
-        return dateFormat.format(date)
+    fun getCurrentDate(): String{
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val current = LocalDateTime.now()
+            val formatter = DateTimeFormatter.ofPattern("ddMMMyyyyhh:mm")
+            val answer: String =  current.format(formatter)
+            answer
+        } else {
+            val date = Date();
+            val formatter = SimpleDateFormat("ddMMyyyyhh:mm")
+            val answer: String = formatter.format(date)
+            answer
+        }
     }
     /* fun savedata(key: String, `val`: String) {
         editor.putString(key, `val`).commit()

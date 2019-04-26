@@ -8,6 +8,8 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Message
 import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
 import android.support.v7.widget.GridLayoutManager
@@ -17,7 +19,9 @@ import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewConfiguration
 import android.view.ViewGroup
+import android.widget.AdapterView
 import android.widget.ImageView
 import android.widget.Toast
 import com.alidevs.instaapp.R
@@ -42,7 +46,8 @@ import kotlin.collections.ArrayList
 
 class HomeFragment : Fragment() {
 
-    val TAG = HomeFragment::getTag.toString()
+
+    private val TAG = "HomeFragment"
     private lateinit var utils: AppPreferences
 
     private lateinit var galleryInactive: ImageView
@@ -62,7 +67,6 @@ class HomeFragment : Fragment() {
     private lateinit var compressedImageFile: Bitmap
     private lateinit var posts_list: MutableList<PostsModel>
     private var postsAdaptert: FullPageAdapter? = null
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -92,9 +96,11 @@ class HomeFragment : Fragment() {
         val linearSnapHelper = PagerSnapHelper()
         linearSnapHelper.attachToRecyclerView(fullPage)
         fullPage.layoutManager = LinearLayoutManager(context)
-        fullPage.adapter = context?.let { FullPageAdapter(posts_list) }
+        fullPage.adapter = context?.let { FullPageAdapter(it, posts_list) }
         recyclerView.layoutManager = GridLayoutManager(context,3)
         recyclerView.adapter = context?.let { GridViewAdapter(posts_list) }
+        //postsAdaptert = context?.let { FullPageAdapter(it, posts_list) }
+        //postsAdaptert!!.setOnItemDoubleClickListener(this)
 
         //Click Events
         uploadImage.setOnClickListener {
@@ -239,12 +245,13 @@ class HomeFragment : Fragment() {
                             Toast.makeText(this.activity, "Error: ${it.message}", Toast.LENGTH_SHORT).show()
                         }.addOnSuccessListener {
                             val downloadthumburl = downloadurl.result
-                            val items = java.util.HashMap<String, Any>()
+                            val items = HashMap<String, Any>()
                             //DocumentReference userRef = db.collection("company").document("users");
                             //val userRef = firestore.collection("users/$user_id")
                             items["image_url"] = downloadurl.result.toString()
                             items["image_thumb"] = downloadthumburl.toString()
                             items["reference"] = downloadthumburl.toString()
+                            items["date_time"] = context?.let { it1 -> AppPreferences(it1).getCurrentDate() }.toString()
                             //items["reference"] = userRef.toString()
                             items["timestamp"] = FieldValue.serverTimestamp()
 
@@ -279,26 +286,35 @@ class HomeFragment : Fragment() {
     }
 
     private fun loadPosts() {
+        val endTime = Date()
+        endTime.hours = 23;
+        endTime.minutes = 59;
+        endTime.seconds = 59;
+        val startTime = Date()
+        startTime.hours = 0;
+        startTime.minutes = 0;
+        startTime.seconds = 1;
+
         if (firebaseAuth.currentUser != null) {
             firestore = FirebaseFirestore.getInstance()
-            val nextQuery = firestore.collection("Posts").orderBy("timestamp", Query.Direction.DESCENDING)
-            nextQuery.addSnapshotListener(object : EventListener<QuerySnapshot> {
-                override fun onEvent(documentSnapshots: QuerySnapshot?, e: FirebaseFirestoreException?) {
-                    if (documentSnapshots != null) {
-                        if (!documentSnapshots.isEmpty) {
-                            for (doc in documentSnapshots.documentChanges) {
+            val nextQuery = firestore.collection("Posts").orderBy("timestamp", Query.Direction.DESCENDING).startAt(endTime)/*.endAt(endTime)*/
+            nextQuery.addSnapshotListener { documentSnapshots, e ->
+                if (documentSnapshots != null) {
+                    if (!documentSnapshots.isEmpty) {
+                        for (doc in documentSnapshots.documentChanges) {
+                            if (doc.type === DocumentChange.Type.ADDED) {
+                                val postId = doc.document.id
+                                val pojo = doc.document.toObject(PostsModel::class.java).withId<PostsModel>(postId)
+                                posts_list.add(pojo)
 
-                                if (doc.type === DocumentChange.Type.ADDED) {
-                                    val pojo = doc.document.toObject(PostsModel::class.java)
-                                    posts_list.add(pojo)
-                                    fullPage.adapter?.notifyDataSetChanged()
-                                }
-
+                                //posts_list[0].timestamp!!.time
+                                fullPage.adapter?.notifyDataSetChanged()
                             }
+
                         }
                     }
                 }
-            })
+            }
 
         }
 
