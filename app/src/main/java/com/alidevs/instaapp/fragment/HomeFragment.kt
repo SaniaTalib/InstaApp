@@ -30,7 +30,6 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.Query
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.UploadTask
@@ -39,8 +38,6 @@ import id.zelory.compressor.Compressor
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.IOException
-import java.text.ParseException
-import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -247,8 +244,6 @@ class HomeFragment : Fragment() {
                             val downloadthumburl = downloadurl.result
                             val items = HashMap<String, Any>()
                             val dateString = AppPreferences(context!!).getCurrentDate()
-                            //DocumentReference userRef = db.collection("company").document("users");
-                            //val userRef = firestore.collection("users/$user_id")
                             items["image_url"] = downloadurl.result.toString()
                             items["image_thumb"] = downloadthumburl.toString()
                             items["reference"] = downloadthumburl.toString()
@@ -268,7 +263,6 @@ class HomeFragment : Fragment() {
                 }
             }
         }
-
     }
 
     override fun onStart() {
@@ -295,7 +289,8 @@ class HomeFragment : Fragment() {
             val finalEndDate = "$startDate 23:59:59"
             if (firebaseAuth.currentUser != null) {
                 firestore = FirebaseFirestore.getInstance()
-                val nextQuery = firestore.collection("Posts").whereGreaterThanOrEqualTo("date_time", finalStartDate).whereLessThanOrEqualTo("date_time",finalEndDate)
+                val nextQuery = firestore.collection("Posts").whereGreaterThanOrEqualTo("date_time", finalStartDate)
+                    .whereLessThanOrEqualTo("date_time", finalEndDate)
                 nextQuery.addSnapshotListener { documentSnapshots, e ->
                     if (documentSnapshots != null) {
                         if (!documentSnapshots.isEmpty) {
@@ -310,7 +305,6 @@ class HomeFragment : Fragment() {
                         }
                     }
                 }
-
             }
         } catch (e: Exception) {
             e.printStackTrace()
