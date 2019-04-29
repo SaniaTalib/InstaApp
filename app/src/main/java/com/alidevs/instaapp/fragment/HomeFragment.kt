@@ -8,8 +8,6 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.os.Handler
-import android.os.Message
 import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
 import android.support.v7.widget.GridLayoutManager
@@ -19,9 +17,7 @@ import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewConfiguration
 import android.view.ViewGroup
-import android.widget.AdapterView
 import android.widget.ImageView
 import android.widget.Toast
 import com.alidevs.instaapp.R
@@ -31,8 +27,10 @@ import com.alidevs.instaapp.adapter.GridViewAdapter
 import com.alidevs.instaapp.model.PostsModel
 import com.alidevs.instaapp.utils.AppPreferences
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.*
-import com.google.firebase.firestore.EventListener
+import com.google.firebase.firestore.DocumentChange
+import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.UploadTask
@@ -41,6 +39,8 @@ import id.zelory.compressor.Compressor
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.IOException
+import java.text.ParseException
+import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -97,7 +97,7 @@ class HomeFragment : Fragment() {
         linearSnapHelper.attachToRecyclerView(fullPage)
         fullPage.layoutManager = LinearLayoutManager(context)
         fullPage.adapter = context?.let { FullPageAdapter(it, posts_list) }
-        recyclerView.layoutManager = GridLayoutManager(context,3)
+        recyclerView.layoutManager = GridLayoutManager(context, 3)
         recyclerView.adapter = context?.let { GridViewAdapter(posts_list) }
         //postsAdaptert = context?.let { FullPageAdapter(it, posts_list) }
         //postsAdaptert!!.setOnItemDoubleClickListener(this)
@@ -246,13 +246,13 @@ class HomeFragment : Fragment() {
                         }.addOnSuccessListener {
                             val downloadthumburl = downloadurl.result
                             val items = HashMap<String, Any>()
+                            val dateString = AppPreferences(context!!).getCurrentDate()
                             //DocumentReference userRef = db.collection("company").document("users");
                             //val userRef = firestore.collection("users/$user_id")
                             items["image_url"] = downloadurl.result.toString()
                             items["image_thumb"] = downloadthumburl.toString()
                             items["reference"] = downloadthumburl.toString()
-                            items["date_time"] = context?.let { it1 -> AppPreferences(it1).getCurrentDate() }.toString()
-                            //items["reference"] = userRef.toString()
+                            items["date_time"] = dateString.toString()
                             items["timestamp"] = FieldValue.serverTimestamp()
 
                             firestore.collection("Posts").add(items)
@@ -286,37 +286,34 @@ class HomeFragment : Fragment() {
     }
 
     private fun loadPosts() {
-        val endTime = Date()
-        endTime.hours = 23;
-        endTime.minutes = 59;
-        endTime.seconds = 59;
-        val startTime = Date()
-        startTime.hours = 0;
-        startTime.minutes = 0;
-        startTime.seconds = 1;
 
-        if (firebaseAuth.currentUser != null) {
-            firestore = FirebaseFirestore.getInstance()
-            val nextQuery = firestore.collection("Posts").orderBy("timestamp", Query.Direction.DESCENDING).startAt(endTime)/*.endAt(endTime)*/
-            nextQuery.addSnapshotListener { documentSnapshots, e ->
-                if (documentSnapshots != null) {
-                    if (!documentSnapshots.isEmpty) {
-                        for (doc in documentSnapshots.documentChanges) {
-                            if (doc.type === DocumentChange.Type.ADDED) {
-                                val postId = doc.document.id
-                                val pojo = doc.document.toObject(PostsModel::class.java).withId<PostsModel>(postId)
-                                posts_list.add(pojo)
-
-                                //posts_list[0].timestamp!!.time
-                                fullPage.adapter?.notifyDataSetChanged()
+        try {
+            val dateString = AppPreferences(context!!).getCurrentDate()
+            val spilttedDate = dateString!!.split(" ")
+            val startDate = spilttedDate[0]
+            val finalStartDate = "$startDate 00:00:01"
+            val finalEndDate = "$startDate 23:59:59"
+            if (firebaseAuth.currentUser != null) {
+                firestore = FirebaseFirestore.getInstance()
+                val nextQuery = firestore.collection("Posts").whereGreaterThanOrEqualTo("date_time", finalStartDate).whereLessThanOrEqualTo("date_time",finalEndDate)
+                nextQuery.addSnapshotListener { documentSnapshots, e ->
+                    if (documentSnapshots != null) {
+                        if (!documentSnapshots.isEmpty) {
+                            for (doc in documentSnapshots.documentChanges) {
+                                if (doc.type === DocumentChange.Type.ADDED) {
+                                    val postId = doc.document.id
+                                    val pojo = doc.document.toObject(PostsModel::class.java).withId<PostsModel>(postId)
+                                    posts_list.add(pojo)
+                                    fullPage.adapter?.notifyDataSetChanged()
+                                }
                             }
-
                         }
                     }
                 }
+
             }
-
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
-
     }
 }
