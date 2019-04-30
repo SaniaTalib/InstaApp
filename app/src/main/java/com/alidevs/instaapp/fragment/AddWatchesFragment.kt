@@ -115,7 +115,7 @@ class AddWatchesFragment : AppCompatActivity() {
                 if (first) {
                     firstImageURI = result.uri
                     img_one.visibility = View.GONE
-                    val f = File(getRealPathFromURI(primaryImageURI))
+                    val f = File(getRealPathFromURI(firstImageURI))
                     val d = Drawable.createFromPath(f.absolutePath)
                     first_img.background = d
                     first = false
@@ -123,7 +123,7 @@ class AddWatchesFragment : AppCompatActivity() {
                 if (second) {
                     secondImageURI = result.uri
                     img_two.visibility = View.GONE
-                    val f = File(getRealPathFromURI(primaryImageURI))
+                    val f = File(getRealPathFromURI(secondImageURI))
                     val d = Drawable.createFromPath(f.absolutePath)
                     second_img.background = d
                     second = false
@@ -131,7 +131,7 @@ class AddWatchesFragment : AppCompatActivity() {
                 if (third) {
                     thirdImageURI = result.uri
                     img_three.visibility = View.GONE
-                    val f = File(getRealPathFromURI(primaryImageURI))
+                    val f = File(getRealPathFromURI(thirdImageURI))
                     val d = Drawable.createFromPath(f.absolutePath)
                     third_img.background = d
                     third = false
