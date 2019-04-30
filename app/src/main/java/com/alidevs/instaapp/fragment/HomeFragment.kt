@@ -341,7 +341,8 @@ class HomeFragment : Fragment() {
     private fun loadLeaderboardPosts() {
         if (firebaseAuth.currentUser != null) {
             firestore = FirebaseFirestore.getInstance()
-            val nextQuery = firestore.collection("Posts").orderBy("likes_count", Query.Direction.DESCENDING).limit(10).whereGreaterThan("likes_count",0)
+            val nextQuery = firestore.collection("Posts").orderBy("likes_count", Query.Direction.DESCENDING).limit(10)
+                .whereGreaterThan("likes_count", 0)
             nextQuery.addSnapshotListener { documentSnapshots, _ ->
                 if (documentSnapshots != null) {
                     if (!documentSnapshots.isEmpty) {

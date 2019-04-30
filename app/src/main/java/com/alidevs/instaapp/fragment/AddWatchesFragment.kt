@@ -2,11 +2,15 @@ package com.alidevs.instaapp.fragment
 
 import android.app.Activity
 import android.content.Intent
+import android.database.Cursor
 import android.graphics.Bitmap
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import com.alidevs.instaapp.R
 import com.alidevs.instaapp.utils.AppPreferences
@@ -81,22 +85,90 @@ class AddWatchesFragment : AppCompatActivity() {
         }
 
         btn_save.setOnClickListener {
-            sendDataToStore(primaryImageURI)
+            /*sendDataToStore(primaryImageURI)
             sendDataToStore(firstImageURI)
             sendDataToStore(secondImageURI)
-            sendDataToStore(thirdImageURI)
+            sendDataToStore(thirdImageURI)*/
         }
     }
 
-    private fun sendDataToStore(Image: Uri) {
+    private fun selectImage() {
+        CropImage.activity()
+            .setMinCropResultSize(512, 512)
+            .setAspectRatio(1, 1)
+            .start(this)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+            val result = CropImage.getActivityResult(data)
+            if (resultCode == Activity.RESULT_OK) {
+                //val resultUri = result.uri
+                if (primary) {
+                    primaryImageURI = result.uri
+                    img_primary.visibility = View.GONE
+                    val f = File(getRealPathFromURI(primaryImageURI))
+                    val d = Drawable.createFromPath(f.absolutePath)
+                    constraintLayout3.background = d
+                    primary = false
+                }
+                if (first) {
+                    firstImageURI = result.uri
+                    img_one.visibility = View.GONE
+                    val f = File(getRealPathFromURI(primaryImageURI))
+                    val d = Drawable.createFromPath(f.absolutePath)
+                    first_img.background = d
+                    first = false
+                }
+                if (second) {
+                    secondImageURI = result.uri
+                    img_two.visibility = View.GONE
+                    val f = File(getRealPathFromURI(primaryImageURI))
+                    val d = Drawable.createFromPath(f.absolutePath)
+                    second_img.background = d
+                    second = false
+                }
+                if (third) {
+                    thirdImageURI = result.uri
+                    img_three.visibility = View.GONE
+                    val f = File(getRealPathFromURI(primaryImageURI))
+                    val d = Drawable.createFromPath(f.absolutePath)
+                    third_img.background = d
+                    third = false
+                }
+            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+                val error = result.error
+                Log.d(TAG, error.toString())
+            }
+        }
+    }
+
+    private fun getRealPathFromURI(contentURI: Uri): String? {
+        val cursor: Cursor? =  contentResolver.query(contentURI, null, null, null, null)
+        return if (cursor == null) { // Source is Dropbox or other similar local file path
+            contentURI.path
+        } else {
+            cursor.moveToFirst()
+            val idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA)
+            cursor.getString(idx)
+        }
+    }
+
+
+
+    private fun sendDataToStore() {
         val randonName = UUID.randomUUID().toString()
-        val newimage = File(Image!!.path)
+        val primaryImgage = File(primaryImageURI.path)
+        /*val newimage = File(primaryImageURI.path)
+        val newimage = File(primaryImageURI.path)
+        val newimage = File(primaryImageURI.path)*/
+
         try {
             compressedImageFile = Compressor(this)
                 .setMaxHeight(720)
                 .setMaxWidth(720)
                 .setQuality(50)
-                .compressToBitmap(newimage)
+                .compressToBitmap(primaryImgage)
         } catch (e: IOException) {
             e.printStackTrace()
         }
@@ -104,14 +176,14 @@ class AddWatchesFragment : AppCompatActivity() {
         val byte = ByteArrayOutputStream()
         compressedImageFile.compress(Bitmap.CompressFormat.JPEG, 100, byte)
         val imagedata = byte.toByteArray()
-        val ref = storageReference.child("post_images").child("$randonName.jpg")
+        val ref = storageReference.child("watches_post_images").child("$randonName.jpg")
         val filepath = ref.putBytes(imagedata)
         filepath.addOnFailureListener {
             Toast.makeText(this, "Error: ${it.message}", Toast.LENGTH_SHORT).show()
         }.addOnSuccessListener {
             val downloadurl = ref.downloadUrl
             if (it.task.isSuccessful) {
-                val newthumbfile = File(Image.path)
+                val newthumbfile = File(primaryImgage.path)
                 try {
                     compressedImageFile = Compressor(this)
                         .setMaxHeight(100)
@@ -124,14 +196,14 @@ class AddWatchesFragment : AppCompatActivity() {
                 val byte = ByteArrayOutputStream()
                 compressedImageFile.compress(Bitmap.CompressFormat.JPEG, 100, byte)
                 val thumbdata = byte.toByteArray()
-                val ref = storageReference.child("post_images").child("$randonName.jpg")
+                val ref = storageReference.child("watches_post_images").child("$randonName.jpg")
                 val filepath = ref.putBytes(imagedata)
                 filepath.addOnFailureListener {
                     Toast.makeText(this, "Error: ${it.message}", Toast.LENGTH_SHORT).show()
                 }.addOnSuccessListener {
                     val downloadurl = ref.downloadUrl
                     if (it.task.isSuccessful) {
-                        val newthumbfile = File(Image.path)
+                        val newthumbfile = File(primaryImgage.path)
                         try {
                             compressedImageFile = Compressor(this)
                                 .setMaxHeight(100)
@@ -144,18 +216,28 @@ class AddWatchesFragment : AppCompatActivity() {
                         val byte = ByteArrayOutputStream()
                         compressedImageFile.compress(Bitmap.CompressFormat.JPEG, 100, byte)
                         val thumbdata = byte.toByteArray()
-                        val uploadTask: UploadTask = storageReference.child("post_images/thumbs")
+                        val uploadTask: UploadTask = storageReference.child("watches_post_images/thumbs")
                             .child("$randonName.jpg").putBytes(thumbdata)
+
+
+
+
+
                         uploadTask.addOnFailureListener {
                             Toast.makeText(this, "Error: ${it.message}", Toast.LENGTH_SHORT).show()
                         }.addOnSuccessListener {
                             val downloadthumburl = downloadurl.result
                             val items = HashMap<String, Any>()
-                            items["image_url"] = downloadurl.result.toString()
-                            items["image_thumb"] = downloadthumburl.toString()
+                            items["image_url_primary"] = downloadurl.result.toString()
+                            items["image_thumb_primary"] = downloadthumburl.toString()
+                            items["image_url_first"] = downloadurl.result.toString()
+                            items["image_thumb_first"] = downloadthumburl.toString()
+                            items["image_url_second"] = downloadurl.result.toString()
+                            items["image_thumb_second"] = downloadthumburl.toString()
+                            items["image_url_third"] = downloadurl.result.toString()
+                            items["image_thumb_third"] = downloadthumburl.toString()
                             items["reference"] = downloadthumburl.toString()
                             items["timestamp"] = FieldValue.serverTimestamp()
-                            items["likes_count"] = 0
 
                             firestore.collection("Posts").add(items)
                                 .addOnCompleteListener { task ->
@@ -168,61 +250,6 @@ class AddWatchesFragment : AppCompatActivity() {
                         }
                     }
                 }
-            }
-        }
-    }
-
-
-    private fun selectImage() {
-        CropImage.activity()
-            .setMinCropResultSize(512, 512)
-            .setAspectRatio(1, 1)
-            .start(this)
-    }
-
-    /*  override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-          super.onActivityResult(requestCode, resultCode, data)
-          if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
-              val result = CropImage.getActivityResult(data)
-              if (resultCode == Activity.RESULT_OK) {
-                  user_id = firebaseAuth.currentUser!!.uid
-                  mainUril = result.uri
-                  compressImage()
-              } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
-                  val error = result.error
-                  Log.d(TAG, "$error")
-              }
-          }
-      }*/
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
-            val result = CropImage.getActivityResult(data)
-            if (resultCode == Activity.RESULT_OK) {
-                //val resultUri = result.uri
-                if (primary) {
-                    primaryImageURI = result.uri
-                    img_primary.setImageURI(primaryImageURI)
-                    primary = false
-                }
-                if (first) {
-                    firstImageURI = result.uri
-                    img_one.setImageURI(firstImageURI)
-                    first = false
-                }
-                if (second) {
-                    secondImageURI = result.uri
-                    img_two.setImageURI(secondImageURI)
-                    second = false
-                }
-                if (third) {
-                    thirdImageURI = result.uri
-                    img_three.setImageURI(thirdImageURI)
-                    third = false
-                }
-            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
-                val error = result.error
-                Log.d(TAG, error.toString())
             }
         }
     }
