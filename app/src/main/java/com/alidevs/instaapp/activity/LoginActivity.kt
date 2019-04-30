@@ -4,15 +4,21 @@ import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.text.TextUtils
+import android.util.Log
+import android.view.ViewGroup
 import android.widget.Toast
 import com.alidevs.instaapp.R
+import com.alidevs.instaapp.ViewModel.AuthenticationListner
+import com.alidevs.instaapp.ViewModel.GetData
+import com.alidevs.instaapp.ViewModel.InstagramDialog
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.activity_login.*
 
-class LoginActivity : AppCompatActivity() {
+class LoginActivity : AppCompatActivity(), AuthenticationListner {
 
     private lateinit var mAuth: FirebaseAuth
+    private var instagramdialog: InstagramDialog? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -21,7 +27,7 @@ class LoginActivity : AppCompatActivity() {
 
         mAuth = FirebaseAuth.getInstance()
 
-        login_button.setOnClickListener {
+        btn_add_watches.setOnClickListener {
             val stringEmail =user_name.text.toString()
             val stringPass = login_password.text.toString()
 
@@ -42,9 +48,27 @@ class LoginActivity : AppCompatActivity() {
 
 
         insta_login_button.setOnClickListener {
-            val intent=Intent(this, MainActivity::class.java)
-            startActivity(intent)
+            instagramdialog = InstagramDialog(this, this)
+            instagramdialog!!.setCancelable(true)
+            instagramdialog!!.show()
+
+            val window = instagramdialog!!.window
+            window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
         }
+    }
+
+    override fun OnCodeRecieved(auth_token: String) {
+        if (auth_token != null) {
+            Log.d("accetoken", auth_token)
+            val getdata = GetData(this)
+            getdata.getUserinfo(auth_token)
+        }
+    }
+
+    override fun DataRecieved(data: MutableMap<String, String>) {
+        val userName = data["username"]
+        Log.d("Data", userName)
+        Toast.makeText(this, "User Logedin: $userName", Toast.LENGTH_SHORT).show()
     }
 }
 

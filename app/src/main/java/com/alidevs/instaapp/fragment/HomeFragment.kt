@@ -24,12 +24,14 @@ import com.alidevs.instaapp.R
 import com.alidevs.instaapp.activity.LoginActivity
 import com.alidevs.instaapp.adapter.FullPageAdapter
 import com.alidevs.instaapp.adapter.GridViewAdapter
+import com.alidevs.instaapp.adapter.LeaderBoardAdapter
 import com.alidevs.instaapp.model.PostsModel
 import com.alidevs.instaapp.utils.AppPreferences
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.UploadTask
@@ -43,8 +45,7 @@ import kotlin.collections.ArrayList
 
 class HomeFragment : Fragment() {
 
-
-    private val TAG = "HomeFragment"
+    val TAG = HomeFragment::getTag.toString()
     private lateinit var utils: AppPreferences
 
     private lateinit var galleryInactive: ImageView
@@ -56,6 +57,7 @@ class HomeFragment : Fragment() {
     private lateinit var contestActive: ImageView
     private lateinit var recyclerView: RecyclerView
     private lateinit var fullPage: RecyclerView
+    private lateinit var leaderBoard: RecyclerView
     private lateinit var user_id: String
     private var mainUril: Uri? = null
     private lateinit var storageReference: StorageReference
@@ -63,7 +65,9 @@ class HomeFragment : Fragment() {
     private lateinit var firebaseAuth: FirebaseAuth
     private lateinit var compressedImageFile: Bitmap
     private lateinit var posts_list: MutableList<PostsModel>
+    private lateinit var leaderboard_list: MutableList<PostsModel>
     private var postsAdaptert: FullPageAdapter? = null
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -78,9 +82,10 @@ class HomeFragment : Fragment() {
         contestActive = root.findViewById(R.id.award_active)
         recyclerView = root.findViewById(R.id.grid_view) as RecyclerView
         fullPage = root.findViewById(R.id.full_page) as RecyclerView
+        leaderBoard = root.findViewById(R.id.recycler_leaderboard) as RecyclerView
         uploadImage = root.findViewById(R.id.upload_img)
         posts_list = ArrayList()
-        //recyclerView.layoutManager = LinearLayoutManager(context)
+        leaderboard_list = ArrayList()
         firebaseAuth = FirebaseAuth.getInstance()
         user_id = firebaseAuth.currentUser!!.uid
         firestore = FirebaseFirestore.getInstance()
@@ -88,16 +93,19 @@ class HomeFragment : Fragment() {
         utils = AppPreferences(context!!)
 
         loadPosts()
+        loadLeaderboardPosts()
 
         /*******************HOME FRAGMENT**********************/
         val linearSnapHelper = PagerSnapHelper()
         linearSnapHelper.attachToRecyclerView(fullPage)
+        val linearSnapHelper1 = PagerSnapHelper()
+        linearSnapHelper1.attachToRecyclerView(leaderBoard)
         fullPage.layoutManager = LinearLayoutManager(context)
-        fullPage.adapter = context?.let { FullPageAdapter(it, posts_list) }
+        fullPage.adapter = context?.let { FullPageAdapter(context!!, posts_list) }
         recyclerView.layoutManager = GridLayoutManager(context, 3)
         recyclerView.adapter = context?.let { GridViewAdapter(posts_list) }
-        //postsAdaptert = context?.let { FullPageAdapter(it, posts_list) }
-        //postsAdaptert!!.setOnItemDoubleClickListener(this)
+        leaderBoard.layoutManager = LinearLayoutManager(context)
+        leaderBoard.adapter = context?.let { LeaderBoardAdapter(context!!, leaderboard_list) }
 
         //Click Events
         uploadImage.setOnClickListener {
@@ -122,35 +130,50 @@ class HomeFragment : Fragment() {
             }
         }
 
-        galleryActive.setOnClickListener {
-            galleryActive.visibility = View.GONE
-            galleryInactive.visibility = View.VISIBLE
-            recyclerView.visibility = View.GONE
-            fullPage.visibility = View.VISIBLE
-        }
         galleryInactive.setOnClickListener {
             galleryActive.visibility = View.VISIBLE
+            pagerInactive.visibility = View.VISIBLE
+            contestInactive.visibility = View.VISIBLE
+
             galleryInactive.visibility = View.GONE
+            pagerActive.visibility = View.GONE
+            contestActive.visibility = View.GONE
+
             fullPage.visibility = View.GONE
             recyclerView.visibility = View.VISIBLE
-        }
-        pagerActive.setOnClickListener {
-            pagerActive.visibility = View.GONE
-            pagerInactive.visibility = View.VISIBLE
 
+            leaderBoard.visibility = View.GONE
         }
+
         pagerInactive.setOnClickListener {
+
             pagerActive.visibility = View.VISIBLE
+            galleryInactive.visibility = View.VISIBLE
+            contestInactive.visibility = View.VISIBLE
+
             pagerInactive.visibility = View.GONE
+            galleryActive.visibility = View.GONE
+            contestActive.visibility = View.GONE
+
+
+            fullPage.visibility = View.VISIBLE
+            recyclerView.visibility = View.GONE
+
+            leaderBoard.visibility = View.GONE
         }
+
         contestInactive.setOnClickListener {
             contestInactive.visibility = View.GONE
+
+            pagerInactive.visibility = View.VISIBLE
+            galleryInactive.visibility = View.VISIBLE
             contestActive.visibility = View.VISIBLE
+            leaderBoard.visibility = View.VISIBLE
+
+            fullPage.visibility = View.GONE
+            recyclerView.visibility = View.GONE
         }
-        contestActive.setOnClickListener {
-            contestInactive.visibility = View.VISIBLE
-            contestActive.visibility = View.GONE
-        }
+
         return root
     }
 
@@ -244,11 +267,14 @@ class HomeFragment : Fragment() {
                             val downloadthumburl = downloadurl.result
                             val items = HashMap<String, Any>()
                             val dateString = AppPreferences(context!!).getCurrentDate()
+                            //DocumentReference userRef = db.collection("company").document("users");
+                            //val userRef = firestore.collection("users/$user_id")
                             items["image_url"] = downloadurl.result.toString()
                             items["image_thumb"] = downloadthumburl.toString()
                             items["reference"] = downloadthumburl.toString()
                             items["date_time"] = dateString.toString()
                             items["timestamp"] = FieldValue.serverTimestamp()
+                            items["likes_count"] = 0
 
                             firestore.collection("Posts").add(items)
                                 .addOnCompleteListener {
@@ -263,6 +289,7 @@ class HomeFragment : Fragment() {
                 }
             }
         }
+
     }
 
     override fun onStart() {
@@ -309,5 +336,29 @@ class HomeFragment : Fragment() {
         } catch (e: Exception) {
             e.printStackTrace()
         }
+    }
+
+    private fun loadLeaderboardPosts() {
+        if (firebaseAuth.currentUser != null) {
+            firestore = FirebaseFirestore.getInstance()
+            val nextQuery = firestore.collection("Posts").orderBy("likes_count", Query.Direction.DESCENDING).limit(10).whereGreaterThan("likes_count",0)
+            nextQuery.addSnapshotListener { documentSnapshots, _ ->
+                if (documentSnapshots != null) {
+                    if (!documentSnapshots.isEmpty) {
+                        for (doc in documentSnapshots.documentChanges) {
+                            if (doc.type === DocumentChange.Type.ADDED) {
+                                val PostId = doc.document.id
+                                val pojo = doc.document.toObject(PostsModel::class.java).withId<PostsModel>(PostId)
+                                leaderboard_list.add(pojo)
+                                leaderBoard.adapter?.notifyDataSetChanged()
+                            }
+
+                        }
+                    }
+                }
+            }
+
+        }
+
     }
 }

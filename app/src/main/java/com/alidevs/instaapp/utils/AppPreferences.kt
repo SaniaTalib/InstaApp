@@ -36,12 +36,12 @@ class AppPreferences(context: Context) {
     fun getCurrentDate(): String? {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val current = LocalDateTime.now()
-            val formatter = DateTimeFormatter.ofPattern("dd-MMM-yyyy HH:mm:ss")
+            val formatter = DateTimeFormatter.ofPattern("dd-MMM-yyyy hh:mm:ss")
             val answer = current.format(formatter)
             answer
         } else {
             val date = Date()
-            val formatter = SimpleDateFormat("dd-MMM-yyyy HH:mm:ss")
+            val formatter = SimpleDateFormat("dd-MMM-yyyy hh:mm:ss")
             val answer: String = formatter.format(date)
             answer
         }

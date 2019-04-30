@@ -45,7 +45,6 @@ dependencies {
     kapt 'com.github.bumptech.glide:compiler:4.8.0'
     implementation 'id.zelory:compressor:2.1.0'
 
-
     //Firebase
     implementation 'com.google.firebase:firebase-auth:16.2.1'
     implementation 'com.google.firebase:firebase-firestore:18.2.0'
@@ -53,6 +52,10 @@ dependencies {
     implementation 'com.firebaseui:firebase-ui-database:4.3.2'
     implementation 'com.google.firebase:firebase-database:16.1.0'
     implementation 'com.google.firebase:firebase-core:16.0.8'
+
+    //NETWORKING
+    implementation 'org.jbundle.util.osgi.wrapped:org.jbundle.util.osgi.wrapped.org.apache.http.client:4.1.2'
+    implementation 'com.squareup.okhttp:okhttp:2.7.5'
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'

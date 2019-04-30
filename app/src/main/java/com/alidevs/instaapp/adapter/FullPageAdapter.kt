@@ -1,9 +1,11 @@
 package com.alidevs.instaapp.adapter
 
 import android.content.Context
+import android.os.Build
 import android.os.Handler
 import android.os.Message
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,6 +25,7 @@ class FullPageAdapter(var context: Context, var list: MutableList<PostsModel>) :
     private val DOUBLE_PRESS_INTERVAL: Long = 250 // in millis
     private var lastPressTime: Long = 0
 
+
     private var mHasDoubleClicked = false
 
     private var firebaseFirestore: FirebaseFirestore? = null
@@ -30,12 +33,16 @@ class FullPageAdapter(var context: Context, var list: MutableList<PostsModel>) :
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var image: ImageView = itemView.findViewById(R.id.img)
+        var imgHeart: ImageView = itemView.findViewById(R.id.heart)
+
+        init {
+            firebaseFirestore = FirebaseFirestore.getInstance()
+            firebaseAuth = FirebaseAuth.getInstance()
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_full_page, parent, false)
-        firebaseFirestore = FirebaseFirestore.getInstance();
-        firebaseAuth = FirebaseAuth.getInstance();
         return ViewHolder(view)
     }
 
@@ -43,12 +50,28 @@ class FullPageAdapter(var context: Context, var list: MutableList<PostsModel>) :
         holder.setIsRecyclable(false)
         val item: PostsModel = list[position]
         val currentUserId = firebaseAuth!!.currentUser!!.uid
-        val blogPostId = item.BlogPostId
+        val blogPostId = item.PostID
 
         val userID = item.user_id
         Glide.with(holder.itemView.context)
             .load(item.image_url)
             .into(holder.image)
+
+        //Get Likes
+        firebaseFirestore!!.collection("Posts/$blogPostId/Likes").document(currentUserId)
+            .addSnapshotListener { documentSnapshot, e ->
+                if (documentSnapshot != null) {
+                    if (documentSnapshot.exists()) {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                            holder.imgHeart.setImageDrawable(context.getDrawable(R.drawable.heart_active))
+                        }
+                    } else {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                            holder.imgHeart.setImageDrawable(context.getDrawable(R.drawable.heart))
+                        }
+                    }
+                }
+            }
 
         holder.image.setOnClickListener {
             val pressTime = System.currentTimeMillis()
@@ -61,8 +84,40 @@ class FullPageAdapter(var context: Context, var list: MutableList<PostsModel>) :
                             likesMap["timestamp"] = FieldValue.serverTimestamp()
                             firebaseFirestore!!.collection("Posts/$blogPostId/Likes").document(currentUserId)
                                 .set(likesMap)
+
                         } else {
                             firebaseFirestore!!.collection("Posts/$blogPostId/Likes").document(currentUserId).delete()
+
+/*
+                            //Get Likes Count
+                            firebaseFirestore!!.collection("Posts/$blogPostId/Likes").limit(1)
+                                .addSnapshotListener { queryDocumentSnapshots, e ->
+                                    if (queryDocumentSnapshots != null) {
+                                        if (!queryDocumentSnapshots.isEmpty) {
+                                            val count = queryDocumentSnapshots.size()
+                                            Log.d("#Count","$count Likes")
+                                            firebaseFirestore!!.collection("Posts").document(blogPostId).update("likes_count", count)
+                                        }else{
+                                            firebaseFirestore!!.collection("Posts").document(blogPostId).update("likes_count", 0)
+                                            Log.d("#Count","$0 Likes")
+                                        }
+                                    }
+                                }*/
+
+                        }
+                    }
+
+                firebaseFirestore!!.collection("Posts/$blogPostId/Likes")
+                    .addSnapshotListener { queryDocumentSnapshots, e ->
+                        if (queryDocumentSnapshots != null) {
+                            if (!queryDocumentSnapshots.isEmpty) {
+                                val count = queryDocumentSnapshots.size()
+                                Log.d("#Count","$count Likes")
+                                firebaseFirestore!!.collection("Posts").document(blogPostId).update("likes_count", count)
+                            }else{
+                                firebaseFirestore!!.collection("Posts").document(blogPostId).update("likes_count", 0)
+                                Log.d("#Count","$0 Likes")
+                            }
                         }
                     }
                 mHasDoubleClicked = true
@@ -81,15 +136,6 @@ class FullPageAdapter(var context: Context, var list: MutableList<PostsModel>) :
             lastPressTime = pressTime
         }
     }
-
-    /*//Like features
-    holder.blogLikeBtn.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-        }
-
-    });*/
-
 
     override fun getItemCount() = list.size
 }

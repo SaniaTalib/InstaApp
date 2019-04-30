@@ -5,10 +5,10 @@ import com.google.firebase.firestore.Exclude
 open class PostID {
 
     @Exclude
-    var BlogPostId: String = ""
+    var PostID: String = ""
 
     fun <T : PostID> withId(id: String): T {
-        this.BlogPostId = id
+        this.PostID = id
         return this as T
     }
 

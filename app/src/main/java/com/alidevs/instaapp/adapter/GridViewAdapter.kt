@@ -1,6 +1,5 @@
 package com.alidevs.instaapp.adapter
 
-import android.content.Context
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -22,7 +21,6 @@ class GridViewAdapter(var list:MutableList<PostsModel>) : RecyclerView.Adapter<G
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.setIsRecyclable(false)
         holder.setIsRecyclable(false)
         val item : PostsModel = list[position]
 
