@@ -67,6 +67,7 @@ class HomeFragment : Fragment() {
     private lateinit var posts_list: MutableList<PostsModel>
     private lateinit var leaderboard_list: MutableList<PostsModel>
     private var postsAdaptert: FullPageAdapter? = null
+    private lateinit var arrayList: ArrayList<PostsModel>
 
 
     override fun onCreateView(
@@ -91,6 +92,7 @@ class HomeFragment : Fragment() {
         firestore = FirebaseFirestore.getInstance()
         storageReference = FirebaseStorage.getInstance().reference
         utils = AppPreferences(context!!)
+        arrayList = ArrayList()
 
         loadPosts()
         loadLeaderboardPosts()
@@ -316,7 +318,8 @@ class HomeFragment : Fragment() {
             val finalEndDate = "$startDate 23:59:59"
             if (firebaseAuth.currentUser != null) {
                 firestore = FirebaseFirestore.getInstance()
-                val nextQuery = firestore.collection("Posts").whereGreaterThanOrEqualTo("date_time", finalStartDate)
+                val nextQuery = firestore.collection("Posts").orderBy("date_time")
+                    .whereGreaterThanOrEqualTo("date_time", finalStartDate)
                     .whereLessThanOrEqualTo("date_time", finalEndDate)
                 nextQuery.addSnapshotListener { documentSnapshots, e ->
                     if (documentSnapshots != null) {
@@ -339,10 +342,22 @@ class HomeFragment : Fragment() {
     }
 
     private fun loadLeaderboardPosts() {
+        val dateString = AppPreferences(context!!).getCurrentDate()
+        val spilttedDate = dateString!!.split(" ")
+        val startDate = spilttedDate[0]
+        val finalStartDate = "$startDate 00:00:01"
+        val finalEndDate = "$startDate 23:59:59"
         if (firebaseAuth.currentUser != null) {
+
             firestore = FirebaseFirestore.getInstance()
-            val nextQuery = firestore.collection("Posts").orderBy("likes_count", Query.Direction.DESCENDING).limit(10)
-                .whereGreaterThan("likes_count", 0)
+
+            var nextQuery = firestore.collection("Posts")
+                .orderBy("likes_count", Query.Direction.DESCENDING)
+                .whereEqualTo("likes_count", 0)
+                .whereEqualTo("date_time",finalStartDate)
+                .whereEqualTo("date_time",finalEndDate)
+                .limit(10)
+
             nextQuery.addSnapshotListener { documentSnapshots, _ ->
                 if (documentSnapshots != null) {
                     if (!documentSnapshots.isEmpty) {
@@ -350,6 +365,10 @@ class HomeFragment : Fragment() {
                             if (doc.type === DocumentChange.Type.ADDED) {
                                 val PostId = doc.document.id
                                 val pojo = doc.document.toObject(PostsModel::class.java).withId<PostsModel>(PostId)
+                                arrayList.add(pojo)
+                                for (i in arrayList.indices){
+                                    arrayList[i].date_time
+                                }
                                 leaderboard_list.add(pojo)
                                 leaderBoard.adapter?.notifyDataSetChanged()
                             }
