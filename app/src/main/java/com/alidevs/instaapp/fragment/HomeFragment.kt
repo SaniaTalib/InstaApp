@@ -59,14 +59,13 @@ class HomeFragment : Fragment() {
     private lateinit var fullPage: RecyclerView
     private lateinit var leaderBoard: RecyclerView
     private lateinit var user_id: String
-    private var mainUril: Uri? = null
+    private lateinit var mainUril: Uri
     private lateinit var storageReference: StorageReference
     private lateinit var firestore: FirebaseFirestore
     private lateinit var firebaseAuth: FirebaseAuth
     private lateinit var compressedImageFile: Bitmap
     private lateinit var posts_list: MutableList<PostsModel>
     private lateinit var leaderboard_list: MutableList<PostsModel>
-    private var postsAdaptert: FullPageAdapter? = null
     private lateinit var arrayList: ArrayList<PostsModel>
 
 
@@ -136,31 +135,23 @@ class HomeFragment : Fragment() {
             galleryActive.visibility = View.VISIBLE
             pagerInactive.visibility = View.VISIBLE
             contestInactive.visibility = View.VISIBLE
-
             galleryInactive.visibility = View.GONE
             pagerActive.visibility = View.GONE
             contestActive.visibility = View.GONE
-
             fullPage.visibility = View.GONE
             recyclerView.visibility = View.VISIBLE
-
             leaderBoard.visibility = View.GONE
         }
 
         pagerInactive.setOnClickListener {
-
             pagerActive.visibility = View.VISIBLE
             galleryInactive.visibility = View.VISIBLE
             contestInactive.visibility = View.VISIBLE
-
             pagerInactive.visibility = View.GONE
             galleryActive.visibility = View.GONE
             contestActive.visibility = View.GONE
-
-
             fullPage.visibility = View.VISIBLE
             recyclerView.visibility = View.GONE
-
             leaderBoard.visibility = View.GONE
         }
 
@@ -309,7 +300,6 @@ class HomeFragment : Fragment() {
     }
 
     private fun loadPosts() {
-
         try {
             val dateString = AppPreferences(context!!).getCurrentDate()
             val spilttedDate = dateString!!.split(" ")
@@ -354,8 +344,8 @@ class HomeFragment : Fragment() {
             var nextQuery = firestore.collection("Posts")
                 .orderBy("likes_count", Query.Direction.DESCENDING)
                 .whereEqualTo("likes_count", 0)
-                .whereEqualTo("date_time",finalStartDate)
-                .whereEqualTo("date_time",finalEndDate)
+                .whereEqualTo("date_time", finalStartDate)
+                .whereEqualTo("date_time", finalEndDate)
                 .limit(10)
 
             nextQuery.addSnapshotListener { documentSnapshots, _ ->
@@ -366,19 +356,16 @@ class HomeFragment : Fragment() {
                                 val PostId = doc.document.id
                                 val pojo = doc.document.toObject(PostsModel::class.java).withId<PostsModel>(PostId)
                                 arrayList.add(pojo)
-                                for (i in arrayList.indices){
+                                for (i in arrayList.indices) {
                                     arrayList[i].date_time
                                 }
                                 leaderboard_list.add(pojo)
                                 leaderBoard.adapter?.notifyDataSetChanged()
                             }
-
                         }
                     }
                 }
             }
-
         }
-
     }
 }

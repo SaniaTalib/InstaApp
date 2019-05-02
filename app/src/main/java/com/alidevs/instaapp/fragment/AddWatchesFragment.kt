@@ -33,15 +33,13 @@ class AddWatchesFragment : AppCompatActivity() {
     private lateinit var compressedImageFile: Bitmap
     private lateinit var user_id: String
     private lateinit var utils: AppPreferences
-    //private lateinit var imgList: List
 
+    var SELECT_PICTURES = 1
 
-    var SELECT_PICTURES = 1;
-
-    private var mArrayUri = ArrayList<Uri>();
-    private var imageUri: Uri? = null;
-    private var up = 0;
-    private var k = 0;
+    private var mArrayUri = ArrayList<Uri>()
+    private var imageUri: Uri? = null
+    private var up = 0
+    private var k = 0
 
     private lateinit var primaryImageURI: Uri
     private lateinit var firstImageURI: Uri
@@ -93,40 +91,35 @@ class AddWatchesFragment : AppCompatActivity() {
             val filepath = FirebaseStorage.getInstance().reference.child("watches_images")
 
             while (up < mArrayUri.size) {
-                val ref = storageReference.child("watches_post_images").child("${mArrayUri[k].lastPathSegment}.jpg")
+                val ref = storageReference.child("watches_post_images").child(mArrayUri[k].lastPathSegment)
                 val filepath = ref.putFile(mArrayUri[k])
                 filepath.addOnSuccessListener { task ->
                     ref.downloadUrl.addOnSuccessListener { downloadPhotoUrl ->
-                        //Now play with downloadPhotoUrl
-                        //Store data into Firebase Realtime Database
-                        val downloadURL = downloadPhotoUrl
-                        imgurl.add(downloadURL.toString())
-                        Toast.makeText(this, downloadURL.toString(), Toast.LENGTH_SHORT).show()
-                        Log.d("#IMAGEURL", downloadURL.toString())
-                        /* val friendlyMessage = FriendlyMessage(null, mUsername, downloadPhotoUrl.toString())
-                                        mDatabaseReference.push().setValue(friendlyMessage)*/
+                        imgurl.add(downloadPhotoUrl.toString())
+                        Toast.makeText(this, downloadPhotoUrl.toString(), Toast.LENGTH_SHORT).show()
+                        Log.d("#IMAGEURL", "->${imgurl.size}")
                     }
                 }
+                val items = HashMap<String, Any>()
+                items["image_url_primary"] = imgurl[k]
                 up++
                 k++
             }
 
-
-            if (edi_brand.text.toString() != "" && edt_model.text.toString() != "" && edt_ref.text.toString() != "" &&
+           /* if (edi_brand.text.toString() != "" && edt_model.text.toString() != "" && edt_ref.text.toString() != "" &&
                 edt_serial.text.toString() != "" && edt_date.text.toString() != "" && edt_comment.text.toString() != ""
             ) {
                 val items = HashMap<String, Any>()
-                items["image_url_primary"] = imgurl[0]
-                items["image_url_first"] = imgurl[1]
-                items["image_url_second"] = imgurl[2]
-                items["image_url_third"] = imgurl[3]
+                items["image_url_primary"] = mArrayUri[0]
+                items["image_url_first"] = mArrayUri[1]
+                items["image_url_second"] = mArrayUri[2]
+                items["image_url_third"] = mArrayUri[3]
                 items["brand_name"] = edi_brand.text.toString()
                 items["model"] = edt_model.text.toString()
                 items["reference"] = edt_ref.text.toString()
                 items["serial"] = edt_serial.text.toString()
                 items["purchase_date"] = edt_date.text.toString()
                 items["comments"] = edt_comment.text.toString()
-                //items["timestamp"] = FieldValue.serverTimestamp()
 
                 firestore.collection("MyWatches").document(user_id).set(items).addOnCompleteListener { task ->
                     if (task.isSuccessful) {
@@ -138,7 +131,7 @@ class AddWatchesFragment : AppCompatActivity() {
                 }
             } else {
                 Toast.makeText(this, "All Fields are mandatory to fill", Toast.LENGTH_LONG).show()
-            }
+            }*/
 
             /*  firestore.collection("MyWatches").add(items)
                   .addOnCompleteListener { task ->
@@ -242,23 +235,7 @@ class AddWatchesFragment : AppCompatActivity() {
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
             val result = CropImage.getActivityResult(data)
             if (resultCode == Activity.RESULT_OK) {
-                /*if (data!!.clipData != null) {
-                    val count = data.clipData.itemCount
-                    Log.i("count", "$count")
-                    var currentItem = 0
-                    while (currentItem < count) {
-                        imageUri = data.clipData.getItemAt(currentItem).uri
 
-
-                        Log.i("uri", imageUri.toString())
-                        mArrayUri.add(imageUri!!)
-                        currentItem += 1
-                    }
-                    Log.i("listsize", "${mArrayUri.size}")
-                } else if (data.data != null) {
-                    var imagePath = data.data.path
-                }*/
-                //val resultUri = result.uri
                 if (primary) {
                     primaryImageURI = result.uri
                     img_primary.visibility = View.GONE
