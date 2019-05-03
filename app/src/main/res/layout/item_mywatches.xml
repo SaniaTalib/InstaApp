@@ -61,7 +61,7 @@
             android:text="7,084,244"
             android:fontFamily="@font/montserrat_regular"
             android:textColor="@android:color/white"
-            android:id="@+id/txt_ref"
+            android:id="@+id/title_serial"
             android:textSize="14sp"
             app:layout_constraintStart_toStartOf="@+id/txt_title"
             app:layout_constraintEnd_toEndOf="@+id/txt_title"

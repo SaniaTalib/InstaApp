@@ -12,7 +12,9 @@ import com.alidevs.instaapp.R
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.android.synthetic.main.activity_login.*
 import kotlinx.android.synthetic.main.activity_signup.*
+import kotlinx.android.synthetic.main.activity_signup.toolbar
 
 class SignupActivity : AppCompatActivity() {
 
@@ -23,6 +25,18 @@ class SignupActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_signup)
+
+        setSupportActionBar(toolbar)
+        val actionBar = supportActionBar
+        toolbar.setNavigationIcon(R.drawable.ic_back_arrow)
+        toolbar.setNavigationOnClickListener {
+            onBackPressed()
+        }
+        actionBar!!.title = ""
+        actionBar.elevation = 4.0F
+        actionBar.setDisplayShowHomeEnabled(true)
+        actionBar.setLogo(R.drawable.ic_logo)
+        actionBar.setDisplayUseLogoEnabled(true)
 
         mAuth = FirebaseAuth.getInstance()
         firestore = FirebaseFirestore.getInstance()

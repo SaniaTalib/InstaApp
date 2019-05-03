@@ -11,7 +11,6 @@ import com.alidevs.instaapp.R
 import com.alidevs.instaapp.ViewModel.AuthenticationListner
 import com.alidevs.instaapp.ViewModel.GetData
 import com.alidevs.instaapp.ViewModel.InstagramDialog
-import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.activity_login.*
 
@@ -24,6 +23,18 @@ class LoginActivity : AppCompatActivity(), AuthenticationListner {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
+
+        setSupportActionBar(toolbar)
+        val actionBar = supportActionBar
+        toolbar.setNavigationIcon(R.drawable.ic_back_arrow)
+        toolbar.setNavigationOnClickListener {
+            onBackPressed()
+        }
+        actionBar!!.title = ""
+        actionBar.elevation = 4.0F
+        actionBar.setDisplayShowHomeEnabled(true)
+        actionBar.setLogo(R.drawable.ic_logo)
+        actionBar.setDisplayUseLogoEnabled(true)
 
         mAuth = FirebaseAuth.getInstance()
 

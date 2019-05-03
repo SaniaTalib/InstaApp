@@ -9,6 +9,7 @@ import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import kotlinx.android.synthetic.main.activity_update_password.*
+import kotlinx.android.synthetic.main.fragment_add_watches.*
 
 class UpdatePasswordActivity : AppCompatActivity() {
 
@@ -20,6 +21,9 @@ class UpdatePasswordActivity : AppCompatActivity() {
         setSupportActionBar(update_password_toolbar)
         val actionBar = supportActionBar
         update_password_toolbar.setNavigationIcon(R.drawable.ic_back_arrow)
+        toolbar.setNavigationOnClickListener {
+            onBackPressed()
+        }
         actionBar!!.title = ""
         actionBar.elevation = 4.0F
         actionBar.setDisplayShowHomeEnabled(true)
@@ -45,8 +49,6 @@ class UpdatePasswordActivity : AppCompatActivity() {
 
                     user.reauthenticate(credential)?.addOnCompleteListener {
                         if (it.isSuccessful) {
-                            Toast.makeText(this, "Updated.....", Toast.LENGTH_SHORT).show()
-
                             user?.updatePassword(update_new_password.text.toString())
                                 .addOnCompleteListener {
                                     if (it.isSuccessful) {

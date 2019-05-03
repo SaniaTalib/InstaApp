@@ -1,29 +1,35 @@
 package com.alidevs.instaapp.activity
 
 import android.content.Intent
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v4.app.Fragment
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.TextView
 import com.alidevs.instaapp.R
 import com.alidevs.instaapp.UpdateEmailActivity
-import kotlinx.android.synthetic.main.activity_settings.*
 
-class SettingsActivity : AppCompatActivity() {
+class SettingsActivity : Fragment() {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_settings)
+    private lateinit var updateEmail: TextView
+    private lateinit var updatePassword: TextView
 
-        update_email_settings.setOnClickListener {
-            val intent= Intent(this, UpdateEmailActivity::class.java)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        val root = inflater.inflate(R.layout.activity_settings, container, false)
+
+        updateEmail = root.findViewById(R.id.update_email_settings)
+        updatePassword = root.findViewById(R.id.update_password_settings)
+
+        updateEmail.setOnClickListener {
+            val intent= Intent(context, UpdateEmailActivity::class.java)
             startActivity(intent)
-
         }
 
-        update_password_settings.setOnClickListener {
-
-            val intent= Intent(this, UpdatePasswordActivity::class.java)
+        updatePassword.setOnClickListener {
+            val intent= Intent(context, UpdatePasswordActivity::class.java)
             startActivity(intent)
-
         }
+        return root
     }
 }

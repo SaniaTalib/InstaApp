@@ -76,9 +76,8 @@ class DashboardActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
                 //constraintLayout.visibility = View.GONE
             }
             R.id.settings -> {
-
-                val intent= Intent(this, SettingsActivity::class.java)
-                startActivity(intent)
+                setupHomeFragment(SettingsActivity())
+                tablayout.visibility = View.GONE
             }
         }
         drawer_layout.closeDrawer(GravityCompat.START)
