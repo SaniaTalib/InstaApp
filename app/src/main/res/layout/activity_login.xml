@@ -109,7 +109,24 @@
             android:background="@drawable/insta_gradient"
             app:layout_constraintEnd_toEndOf="@+id/btn_add_watches"
             app:layout_constraintStart_toStartOf="@+id/btn_add_watches"
-            android:layout_marginBottom="24dp"
+            android:layout_marginBottom="72dp"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            />
+
+    <TextView
+            android:text="forgot password?"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/forgot_pass"
+            android:textColor="@color/grey"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginLeft="8dp"
+            android:layout_marginStart="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginTop="20dp"
+            app:layout_constraintTop_toBottomOf="@+id/insta_login_button"
             />
 </android.support.constraint.ConstraintLayout>

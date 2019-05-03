@@ -35,6 +35,9 @@
         </activity>
         <activity android:name=".activity.SettingsActivity"/>
         <activity android:name=".activity.AddWatchesActivity"/>
+        <activity android:name=".activity.ForgotPasswordActivity"/>
+
+        <activity android:name=".UpdateEmailActivity"/>
         <activity android:name=".activity.UpdatePasswordActivity"/>
 
         <activity

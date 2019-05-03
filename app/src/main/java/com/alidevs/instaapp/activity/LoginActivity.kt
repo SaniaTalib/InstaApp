@@ -46,7 +46,10 @@ class LoginActivity : AppCompatActivity(), AuthenticationListner {
         }
 
 
-
+        forgot_pass.setOnClickListener {
+            val intent = Intent(this@LoginActivity,ForgotPasswordActivity::class.java)
+            startActivity(intent)
+        }
         insta_login_button.setOnClickListener {
             instagramdialog = InstagramDialog(this, this)
             instagramdialog!!.setCancelable(true)

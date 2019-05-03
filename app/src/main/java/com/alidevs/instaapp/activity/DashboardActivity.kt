@@ -1,5 +1,6 @@
 package com.alidevs.instaapp.activity
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.NavigationView
 import android.support.v4.app.Fragment
@@ -75,6 +76,9 @@ class DashboardActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
                 //constraintLayout.visibility = View.GONE
             }
             R.id.settings -> {
+
+                val intent= Intent(this, SettingsActivity::class.java)
+                startActivity(intent)
             }
         }
         drawer_layout.closeDrawer(GravityCompat.START)
