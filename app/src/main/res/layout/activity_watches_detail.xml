@@ -195,8 +195,6 @@
                     app:layout_constraintStart_toEndOf="@+id/textView12"
                     />
 
-
-
         </android.support.constraint.ConstraintLayout>
 
     </ScrollView>
