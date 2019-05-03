@@ -76,7 +76,7 @@ class FullPageAdapter(var context: Context, var list: MutableList<PostsModel>) :
         holder.image.setOnClickListener {
             val pressTime = System.currentTimeMillis()
             if (pressTime - lastPressTime <= DOUBLE_PRESS_INTERVAL && !mHasDoubleClicked) {
-                Toast.makeText(context, "Double Click Event", Toast.LENGTH_SHORT).show()
+                //Toast.makeText(context, "Double Click Event", Toast.LENGTH_SHORT).show()
                 firebaseFirestore!!.collection("Posts/$blogPostId/Likes").document(currentUserId).get()
                     .addOnCompleteListener { task ->
                         if (!task.result!!.exists()) {
@@ -87,23 +87,6 @@ class FullPageAdapter(var context: Context, var list: MutableList<PostsModel>) :
 
                         } else {
                             firebaseFirestore!!.collection("Posts/$blogPostId/Likes").document(currentUserId).delete()
-
-/*
-                            //Get Likes Count
-                            firebaseFirestore!!.collection("Posts/$blogPostId/Likes").limit(1)
-                                .addSnapshotListener { queryDocumentSnapshots, e ->
-                                    if (queryDocumentSnapshots != null) {
-                                        if (!queryDocumentSnapshots.isEmpty) {
-                                            val count = queryDocumentSnapshots.size()
-                                            Log.d("#Count","$count Likes")
-                                            firebaseFirestore!!.collection("Posts").document(blogPostId).update("likes_count", count)
-                                        }else{
-                                            firebaseFirestore!!.collection("Posts").document(blogPostId).update("likes_count", 0)
-                                            Log.d("#Count","$0 Likes")
-                                        }
-                                    }
-                                }*/
-
                         }
                     }
 
@@ -112,11 +95,12 @@ class FullPageAdapter(var context: Context, var list: MutableList<PostsModel>) :
                         if (queryDocumentSnapshots != null) {
                             if (!queryDocumentSnapshots.isEmpty) {
                                 val count = queryDocumentSnapshots.size()
-                                Log.d("#Count","$count Likes")
-                                firebaseFirestore!!.collection("Posts").document(blogPostId).update("likes_count", count)
-                            }else{
+                                Log.d("#Count", "$count Likes")
+                                firebaseFirestore!!.collection("Posts").document(blogPostId)
+                                    .update("likes_count", count)
+                            } else {
                                 firebaseFirestore!!.collection("Posts").document(blogPostId).update("likes_count", 0)
-                                Log.d("#Count","$0 Likes")
+                                Log.d("#Count", "$0 Likes")
                             }
                         }
                     }
@@ -126,7 +110,7 @@ class FullPageAdapter(var context: Context, var list: MutableList<PostsModel>) :
                 val myHandler = object : Handler() {
                     override fun handleMessage(m: Message) {
                         if (!mHasDoubleClicked) {
-                            Toast.makeText(context, "Single Click Event", Toast.LENGTH_SHORT).show()
+                            //Toast.makeText(context, "Single Click Event", Toast.LENGTH_SHORT).show()
                         }
                     }
                 }

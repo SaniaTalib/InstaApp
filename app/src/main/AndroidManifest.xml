@@ -34,7 +34,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".activity.SettingsActivity"/>
-        <activity android:name=".fragment.AddWatchesFragment"/>
+        <activity android:name=".activity.AddWatchesActivity"/>
         <activity android:name=".activity.UpdatePasswordActivity"/>
 
         <activity

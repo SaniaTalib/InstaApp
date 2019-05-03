@@ -12,45 +12,78 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import com.alidevs.instaapp.R
+import com.alidevs.instaapp.activity.AddWatchesActivity
 import com.alidevs.instaapp.adapter.MyWatchesAdapter
-import android.support.v7.app.AppCompatActivity
-import android.util.Log
-import kotlinx.android.synthetic.main.app_bar_dashboard.*
+import com.alidevs.instaapp.model.WatchesModel
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.DocumentChange
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
 
 class MyWatchesFragment : Fragment() {
 
     private lateinit var tabLayout: TabLayout
     private lateinit var constraintLayout: ConstraintLayout
     private lateinit var btnAddWatches: Button
+    private var recyclerView: RecyclerView? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    private lateinit var storageReference: StorageReference
+    private lateinit var firestore: FirebaseFirestore
+    private lateinit var firebaseAuth: FirebaseAuth
 
-    }
+    private lateinit var user_id: String
+    private lateinit var posts_list: MutableList<WatchesModel>
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val root = inflater.inflate(R.layout.fragment_news, container, false)
-        val recyclerView = root.findViewById(R.id.recyclerview) as RecyclerView
+        val root = inflater.inflate(R.layout.fragment_my_watches, container, false)
+        recyclerView = root.findViewById(R.id.recyclerview)
         btnAddWatches = root.findViewById(R.id.btn_add_watches)
-        recyclerView.layoutManager = LinearLayoutManager(context)
-        recyclerView.adapter = context?.let { MyWatchesAdapter(it) }
+        //Init components
+        firebaseAuth = FirebaseAuth.getInstance()
+        user_id = firebaseAuth.currentUser!!.uid
+        firestore = FirebaseFirestore.getInstance()
+        storageReference = FirebaseStorage.getInstance().reference
+        posts_list = ArrayList()
+        loadPosts()
+
+        recyclerView!!.layoutManager = LinearLayoutManager(context)
+        recyclerView!!.adapter = context?.let { MyWatchesAdapter(context!!, posts_list) }
+
+
 
         btnAddWatches.setOnClickListener {
-            val intent = Intent(context, AddWatchesFragment::class.java)
+            val intent = Intent(context, AddWatchesActivity::class.java)
             startActivity(intent)
         }
         return root
     }
 
 
-    private fun setupHomeFragment(fragment: Fragment) {
-        val fragmentManager = fragmentManager
-        val ft = fragmentManager!!.beginTransaction()
-        ft.replace(R.id.content_main,fragment)
-        ft.addToBackStack("true")
-        ft.commit()
+    private fun loadPosts() {
+        try {
+            if (firebaseAuth.currentUser != null) {
+                firestore = FirebaseFirestore.getInstance()
+                firestore.collection("MyWatches").addSnapshotListener { documentSnapshots, e ->
+                    if (documentSnapshots != null) {
+                        if (!documentSnapshots.isEmpty) {
+                            for (doc in documentSnapshots.documentChanges) {
+                                if (doc.type === DocumentChange.Type.ADDED) {
+                                    val postId = doc.document.id
+                                    val pojo = doc.document.toObject(WatchesModel::class.java).withId<WatchesModel>(postId)
+                                    posts_list.add(pojo)
+                                    recyclerView!!.adapter?.notifyDataSetChanged()
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 }

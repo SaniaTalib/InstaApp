@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                             xmlns:app="http://schemas.android.com/apk/res-auto"
+                                             xmlns:tools="http://schemas.android.com/tools"
+                                             android:background="#222222"
+                                             android:layout_width="match_parent"
+                                             android:layout_height="match_parent"
+                                             tools:context=".fragment.AddWatchedFragment"
+        >
+
+    <android.support.design.widget.AppBarLayout
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:theme="@style/AppTheme.AppBarOverlay"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:id="@+id/appBarLayout"
+            >
+
+        <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="?attr/colorPrimary"
+                app:popupTheme="@style/AppTheme.PopupOverlay"
+                >
+
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="My Watches"
+                    android:textAllCaps="true"
+                    android:fontFamily="@font/montserrat_bold"
+                    android:textColor="@color/gold"
+                    android:textSize="18sp"
+                    android:layout_gravity="center"
+                    android:id="@+id/toolbar_title"
+                    />
+
+        </android.support.v7.widget.Toolbar>
+
+    </android.support.design.widget.AppBarLayout>
+
+    <ScrollView
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/appBarLayout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintVertical_bias="1.0"
+            android:id="@+id/scrollView2"
+            >
+
+
+        <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                >
+
+
+            <android.support.constraint.ConstraintLayout
+                    android:layout_width="0dp"
+                    android:layout_height="300dp"
+                    android:background="#353535"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginRight="16dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginStart="16dp"
+                    app:layout_constraintHorizontal_bias="0.498"
+                    android:layout_marginTop="8dp"
+                    android:id="@+id/constraintLayout3"
+                    app:layout_constraintTop_toTopOf="parent"
+                    >
+
+                <ImageView
+                        android:layout_width="54dp"
+                        android:layout_height="54dp"
+                        app:srcCompat="@drawable/ic_camera_icon__white"
+                        app:layout_constraintTop_toTopOf="parent"
+                        android:layout_marginBottom="8dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        android:layout_marginEnd="24dp"
+                        android:layout_marginRight="24dp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        android:layout_marginLeft="24dp"
+                        android:layout_marginStart="24dp"
+                        android:id="@+id/img_primary"
+                        />
+            </android.support.constraint.ConstraintLayout>
+
+            <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="80dp"
+                    android:weightSum="1"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    app:layout_constraintTop_toBottomOf="@+id/constraintLayout3"
+                    android:layout_marginTop="8dp"
+                    app:layout_constraintEnd_toEndOf="@+id/constraintLayout3"
+                    app:layout_constraintStart_toStartOf="@+id/constraintLayout3"
+                    android:id="@+id/linearLayout"
+                    >
+
+
+                <android.support.constraint.ConstraintLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:id="@+id/first_img"
+                        android:padding="17dp"
+                        android:background="#353535"
+                        android:layout_weight=".3333"
+                        >
+
+                    <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            app:srcCompat="@drawable/ic_camera_icon__white"
+                            android:id="@+id/img_one"
+
+                            />
+
+                </android.support.constraint.ConstraintLayout>
+
+                <android.support.constraint.ConstraintLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:padding="17dp"
+                        android:id="@+id/second_img"
+                        android:background="#353535"
+                        android:layout_weight=".3333"
+                        android:layout_marginStart="4dp"
+                        android:layout_marginEnd="4dp"
+                        >
+
+                    <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            app:srcCompat="@drawable/ic_camera_icon__white"
+                            android:id="@+id/img_two"
+
+                            />
+
+                </android.support.constraint.ConstraintLayout>
+
+                <android.support.constraint.ConstraintLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:id="@+id/third_img"
+                        android:padding="17dp"
+                        android:background="#353535"
+                        android:layout_weight=".3333"
+                        >
+
+                    <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            app:srcCompat="@drawable/ic_camera_icon__white"
+                            android:id="@+id/img_three"
+
+                            />
+
+                </android.support.constraint.ConstraintLayout>
+
+            </LinearLayout>
+
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/brand_name"
+                    android:textAllCaps="true"
+                    android:textColor="@color/gold"
+                    android:textSize="14sp"
+                    app:layout_constraintTop_toBottomOf="@+id/linearLayout"
+                    app:layout_constraintStart_toStartOf="@+id/linearLayout"
+                    android:layout_marginTop="24dp"
+                    android:id="@+id/textView12"
+                    />
+
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Serial"
+                    android:textAllCaps="true"
+                    android:textColor="@color/gold"
+                    android:textSize="14sp"
+                    android:id="@+id/txt_ref"
+                    app:layout_constraintTop_toTopOf="@+id/textView12"
+                    app:layout_constraintBottom_toBottomOf="@+id/textView12"
+                    app:layout_constraintStart_toEndOf="@+id/textView12"
+                    />
+
+
+
+        </android.support.constraint.ConstraintLayout>
+
+    </ScrollView>
+
+
+</android.support.constraint.ConstraintLayout>

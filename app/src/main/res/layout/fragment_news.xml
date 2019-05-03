@@ -20,25 +20,5 @@
             android:layout_marginBottom="16dp"
             />
 
-    <Button
-            android:layout_width="0dp"
-            android:layout_height="47dp"
-            android:id="@+id/btn_add_watches"
-            android:background="@drawable/buttons_border"
-            android:fontFamily="@font/montserrat_semibold"
-            android:textColor="@color/textColor2"
-            android:text="Add Watches"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_marginLeft="18dp"
-            android:layout_marginStart="18dp"
-            android:layout_marginRight="18dp"
-            android:layout_marginEnd="18dp"
-            android:layout_marginBottom="16dp"
-            />
-
-
 
 </android.support.constraint.ConstraintLayout>
