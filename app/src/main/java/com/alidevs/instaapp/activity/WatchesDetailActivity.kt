@@ -33,8 +33,16 @@ class WatchesDetailActivity: AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_watches_detail)
-
-
+        setSupportActionBar(toolbar)
+        val actionBar = supportActionBar
+        toolbar.setNavigationIcon(R.drawable.ic_back_arrow)
+        toolbar.setNavigationOnClickListener {
+            onBackPressed()
+        }
+        actionBar!!.title = ""
+        actionBar.elevation = 4.0F
+        actionBar.setDisplayShowHomeEnabled(true)
+        actionBar.setDisplayUseLogoEnabled(true)
         //Init components
         firebaseAuth = FirebaseAuth.getInstance()
         user_id = firebaseAuth.currentUser!!.uid

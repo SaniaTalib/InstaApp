@@ -16,11 +16,13 @@ class CreateNewLoginActivity : AppCompatActivity() {
 
             val intent =Intent(this, LoginActivity::class.java)
             startActivity(intent)
+            finish()
         }
 
         create_acc_btn.setOnClickListener {
             val intent= Intent(this, SignupActivity::class.java)
             startActivity(intent)
+            finish()
         }
     }
 }

@@ -70,7 +70,6 @@ class AddWatchesActivity : AppCompatActivity() {
             onBackPressed()
         }
 
-
         //Init components
         firebaseAuth = FirebaseAuth.getInstance()
         user_id = firebaseAuth.currentUser!!.uid
@@ -131,6 +130,7 @@ class AddWatchesActivity : AppCompatActivity() {
                                         if (task.isSuccessful) {
                                             progressBar2.visibility = View.GONE
                                             onBackPressed()
+                                            finish()
                                         }
                                     }.addOnFailureListener {
                                         Toast.makeText(this, "FireStore Error: ${it.message}", Toast.LENGTH_SHORT)
@@ -154,7 +154,6 @@ class AddWatchesActivity : AppCompatActivity() {
             .setAspectRatio(1, 1)
             .start(this)
     }
-
 
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -200,7 +199,7 @@ class AddWatchesActivity : AppCompatActivity() {
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 val error = result.error
                 Log.d(TAG, error.toString())
-            }else{
+            } else {
                 Log.d(TAG, "Crashed")
             }
         }
@@ -218,14 +217,16 @@ class AddWatchesActivity : AppCompatActivity() {
     }
 
     fun showDatePickerDialog(v: View) {
-        DatePickerDialog(this@AddWatchesActivity,
+        DatePickerDialog(
+            this@AddWatchesActivity,
             dateSetListener,
             cal.get(Calendar.YEAR),
             cal.get(Calendar.MONTH),
-            cal.get(Calendar.DAY_OF_MONTH)).show()
+            cal.get(Calendar.DAY_OF_MONTH)
+        ).show()
     }
 
-    val dateSetListener = DatePickerDialog.OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
+    private val dateSetListener = DatePickerDialog.OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
         cal.set(Calendar.YEAR, year)
         cal.set(Calendar.MONTH, monthOfYear)
         cal.set(Calendar.DAY_OF_MONTH, dayOfMonth)

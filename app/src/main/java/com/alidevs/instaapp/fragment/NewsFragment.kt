@@ -43,6 +43,7 @@ class NewsFragment : Fragment() {
 
             override fun onPreExecute() {
                 mDialog.setMessage("Please wait...")
+                mDialog.setCancelable(false)
                 mDialog.show()
             }
 

@@ -8,6 +8,7 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.support.constraint.ConstraintLayout
 import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
 import android.support.v7.widget.GridLayoutManager
@@ -19,6 +20,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.ProgressBar
+import android.widget.TextView
 import android.widget.Toast
 import com.alidevs.instaapp.R
 import com.alidevs.instaapp.activity.LoginActivity
@@ -40,6 +43,7 @@ import id.zelory.compressor.Compressor
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.IOException
+import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -49,6 +53,8 @@ class HomeFragment : Fragment() {
     private lateinit var utils: AppPreferences
 
     private lateinit var galleryInactive: ImageView
+    private lateinit var btnClose: ImageView
+    private lateinit var submittedLayout: ConstraintLayout
     private lateinit var uploadImage: ImageView
     private lateinit var galleryActive: ImageView
     private lateinit var pagerActive: ImageView
@@ -58,6 +64,7 @@ class HomeFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var fullPage: RecyclerView
     private lateinit var leaderBoard: RecyclerView
+    private lateinit var signupProgress: ProgressBar
     private lateinit var user_id: String
     private lateinit var mainUril: Uri
     private lateinit var storageReference: StorageReference
@@ -67,6 +74,8 @@ class HomeFragment : Fragment() {
     private lateinit var posts_list: MutableList<PostsModel>
     private lateinit var leaderboard_list: MutableList<PostsModel>
     private lateinit var arrayList: ArrayList<PostsModel>
+    private lateinit var txtTitle: TextView
+    private lateinit var txtTag: TextView
 
 
     override fun onCreateView(
@@ -84,6 +93,11 @@ class HomeFragment : Fragment() {
         fullPage = root.findViewById(R.id.full_page) as RecyclerView
         leaderBoard = root.findViewById(R.id.recycler_leaderboard) as RecyclerView
         uploadImage = root.findViewById(R.id.upload_img)
+        signupProgress = root.findViewById(R.id.signup_progress)
+        btnClose = root.findViewById(R.id.btn_close)
+        submittedLayout = root.findViewById(R.id.submitted_layout)
+        txtTitle = root.findViewById(R.id.textView3)
+        txtTag = root.findViewById(R.id.textView7)
         posts_list = ArrayList()
         leaderboard_list = ArrayList()
         firebaseAuth = FirebaseAuth.getInstance()
@@ -110,28 +124,38 @@ class HomeFragment : Fragment() {
 
         //Click Events
         uploadImage.setOnClickListener {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                if (ActivityCompat.checkSelfPermission(
-                        context!!.applicationContext,
-                        Manifest.permission.READ_EXTERNAL_STORAGE
-                    ) != PackageManager.PERMISSION_GRANTED
-                ) {
-                    Toast.makeText(context, "Permission Denied", Toast.LENGTH_SHORT).show()
-                    ActivityCompat.requestPermissions(
-                        this.activity!!,
-                        arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 1
-                    )
+            if (utils.getString("isSubmitted") == null || utils.getString("isSubmitted") != utils.getDate()) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    if (ActivityCompat.checkSelfPermission(
+                            context!!.applicationContext,
+                            Manifest.permission.READ_EXTERNAL_STORAGE
+                        ) != PackageManager.PERMISSION_GRANTED
+                    ) {
+                        Toast.makeText(context, "Permission Denied", Toast.LENGTH_SHORT).show()
+                        ActivityCompat.requestPermissions(
+                            this.activity!!,
+                            arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 1
+                        )
+                    } else {
+                        selectImage()
+                        Toast.makeText(context, "Permission Granted", Toast.LENGTH_SHORT).show()
+                    }
                 } else {
                     selectImage()
                     Toast.makeText(context, "Permission Granted", Toast.LENGTH_SHORT).show()
                 }
             } else {
-                selectImage()
-                Toast.makeText(context, "Permission Granted", Toast.LENGTH_SHORT).show()
+                submittedLayout.visibility = View.VISIBLE
             }
         }
 
+        btnClose.setOnClickListener {
+            submittedLayout.visibility = View.GONE
+        }
+
         galleryInactive.setOnClickListener {
+            txtTag.text = "#Speedy Saturday"
+            txtTitle.text = "Gallery"
             galleryActive.visibility = View.VISIBLE
             pagerInactive.visibility = View.VISIBLE
             contestInactive.visibility = View.VISIBLE
@@ -144,6 +168,8 @@ class HomeFragment : Fragment() {
         }
 
         pagerInactive.setOnClickListener {
+            txtTag.text = "#Speedy Saturday"
+            txtTitle.text = "Gallery"
             pagerActive.visibility = View.VISIBLE
             galleryInactive.visibility = View.VISIBLE
             contestInactive.visibility = View.VISIBLE
@@ -156,8 +182,11 @@ class HomeFragment : Fragment() {
         }
 
         contestInactive.setOnClickListener {
-            contestInactive.visibility = View.GONE
 
+            txtTag.text = "#Speedy Saturday"
+            txtTitle.text = "Top 10"
+
+            contestInactive.visibility = View.GONE
             pagerInactive.visibility = View.VISIBLE
             galleryInactive.visibility = View.VISIBLE
             contestActive.visibility = View.VISIBLE
@@ -193,6 +222,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun compressImage() {
+        signupProgress.visibility = View.VISIBLE
         val randonName = UUID.randomUUID().toString()
         val newimage = File(mainUril!!.path)
         try {
@@ -272,9 +302,12 @@ class HomeFragment : Fragment() {
                             firestore.collection("Posts").add(items)
                                 .addOnCompleteListener {
                                     if (it.isSuccessful) {
+                                        signupProgress.visibility = View.GONE
+                                        utils.putString("isSubmitted", utils.getDate().toString())
                                         Toast.makeText(context, "Post was added", Toast.LENGTH_LONG).show()
                                     }
                                 }.addOnFailureListener {
+                                    signupProgress.visibility = View.GONE
                                     Toast.makeText(context, "FireStore Error: ${it.message}", Toast.LENGTH_SHORT).show()
                                 }
                         }
@@ -343,10 +376,7 @@ class HomeFragment : Fragment() {
 
             var nextQuery = firestore.collection("Posts")
                 .orderBy("likes_count", Query.Direction.DESCENDING)
-                .whereEqualTo("likes_count", 0)
-                .whereEqualTo("date_time", finalStartDate)
-                .whereEqualTo("date_time", finalEndDate)
-                .limit(10)
+                .whereGreaterThan("likes_count", 0).limit(10)
 
             nextQuery.addSnapshotListener { documentSnapshots, _ ->
                 if (documentSnapshots != null) {
@@ -356,11 +386,21 @@ class HomeFragment : Fragment() {
                                 val PostId = doc.document.id
                                 val pojo = doc.document.toObject(PostsModel::class.java).withId<PostsModel>(PostId)
                                 arrayList.add(pojo)
-                                for (i in arrayList.indices) {
-                                    arrayList[i].date_time
+
+                                val sdf = SimpleDateFormat("dd-MMM-yyyy hh:mm:ss", Locale.US)
+                                var date1 = sdf.parse(finalStartDate)
+                                var date2 = sdf.parse(finalEndDate)
+                                var currentDate = sdf.parse(arrayList[doc.newIndex].date_time)
+                                if (currentDate.after(date1) && currentDate.before(date2)) {
+                                    leaderboard_list.add(pojo)
+                                    leaderBoard.adapter?.notifyDataSetChanged()
                                 }
-                                leaderboard_list.add(pojo)
+
+                            }
+                            if (doc.type == DocumentChange.Type.MODIFIED) {
+
                                 leaderBoard.adapter?.notifyDataSetChanged()
+
                             }
                         }
                     }

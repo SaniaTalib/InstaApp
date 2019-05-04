@@ -21,7 +21,17 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            />
+           >
+
+        <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Toolbar Title"
+                app:srcCompat="@drawable/ic_logo"
+                android:layout_gravity="center"
+                android:id="@+id/toolbar_title" />
+
+    </android.support.v7.widget.Toolbar>
 
     <EditText
             android:layout_width="0dp"
@@ -109,8 +119,8 @@
             android:layout_marginRight="8dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
-            android:layout_marginBottom="8dp"
-            app:layout_constraintBottom_toTopOf="@+id/insta_login_button"
+            app:layout_constraintBottom_toTopOf="@+id/forgot_pass"
+            android:layout_marginBottom="24dp"
             />
 
     <Button
@@ -121,6 +131,7 @@
             android:textColor="@color/textColor2"
             android:fontFamily="@font/montserrat_semibold"
             android:background="@drawable/insta_gradient"
+            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="@+id/btn_add_watches"
             app:layout_constraintStart_toStartOf="@+id/btn_add_watches"
             android:layout_marginBottom="72dp"
@@ -140,7 +151,21 @@
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginEnd="8dp"
             android:layout_marginRight="8dp"
-            android:layout_marginTop="20dp"
-            app:layout_constraintTop_toBottomOf="@+id/insta_login_button"
+            android:layout_marginBottom="32dp"
+            app:layout_constraintBottom_toBottomOf="parent"
             />
+
+    <ProgressBar
+            style="?android:attr/progressBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/signup_progress"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:visibility="gone"
+            />
+
+
 </android.support.constraint.ConstraintLayout>

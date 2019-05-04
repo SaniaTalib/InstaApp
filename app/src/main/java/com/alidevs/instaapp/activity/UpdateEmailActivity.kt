@@ -3,13 +3,13 @@ package com.alidevs.instaapp
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.view.View
 import android.widget.Toast
 import com.alidevs.instaapp.activity.LoginActivity
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import kotlinx.android.synthetic.main.activity_update_email.*
-import kotlinx.android.synthetic.main.fragment_add_watches.*
 
 class UpdateEmailActivity : AppCompatActivity() {
 
@@ -26,13 +26,12 @@ class UpdateEmailActivity : AppCompatActivity() {
 
         val actionBar = supportActionBar
         update_email_toolbar.setNavigationIcon(R.drawable.ic_back_arrow)
-        toolbar.setNavigationOnClickListener {
+        update_email_toolbar.setNavigationOnClickListener {
             onBackPressed()
         }
         actionBar!!.title = ""
         actionBar.elevation = 4.0F
         actionBar.setDisplayShowHomeEnabled(true)
-        actionBar.setLogo(R.drawable.ic_logo)
         actionBar.setDisplayUseLogoEnabled(true)
 
 
@@ -47,15 +46,17 @@ class UpdateEmailActivity : AppCompatActivity() {
         if (update_email_address.text.isNotEmpty() && current_password.text.isNotEmpty()) {
             val user: FirebaseUser? = mAuth.currentUser
             if (user != null && user.email != null) {
+                signup_progress.visibility = View.VISIBLE
 
                 val credential =
                     EmailAuthProvider.getCredential(user.email!!, current_password.text.toString())
 
                 user.reauthenticate(credential)?.addOnCompleteListener {
                     if (it.isSuccessful) {
-                       user.updateEmail(update_email_address.text.toString())
+                        user.updateEmail(update_email_address.text.toString())
                             .addOnCompleteListener {
                                 if (it.isSuccessful) {
+                                    signup_progress.visibility = View.GONE
                                     Toast.makeText(this, "Email change success", Toast.LENGTH_SHORT).show()
                                     mAuth.signOut()
                                     startActivity(Intent(this, LoginActivity::class.java))
@@ -63,7 +64,8 @@ class UpdateEmailActivity : AppCompatActivity() {
                                 }
                             }
                     } else {
-                        Toast.makeText(this, "Not Updated", Toast.LENGTH_SHORT).show()
+                        signup_progress.visibility = View.GONE
+                        Toast.makeText(this, "Not Updated->${it.result}", Toast.LENGTH_SHORT).show()
                     }
                 }
             }
