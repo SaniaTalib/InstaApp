@@ -125,7 +125,7 @@ class AddWatchesActivity : AppCompatActivity() {
                                 items["purchase_date"] = edt_date.text.toString()
                                 items["comments"] = edt_comment.text.toString()
 
-                                firestore.collection("MyWatches").document().set(items)
+                                firestore.collection("MyWatches/$user_id/submissions").document().set(items)
                                     .addOnCompleteListener { task ->
                                         if (task.isSuccessful) {
                                             progressBar2.visibility = View.GONE

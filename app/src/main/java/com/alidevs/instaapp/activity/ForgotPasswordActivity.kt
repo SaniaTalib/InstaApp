@@ -53,7 +53,7 @@ class ForgotPasswordActivity : AppCompatActivity() {
                     .show()
             } else {
                 signup_progress.visibility = View.GONE
-                Toast.makeText(applicationContext, "${task.result}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(applicationContext, "No user registered with this email", Toast.LENGTH_SHORT).show()
             }
         }
 

@@ -67,7 +67,7 @@ class MyWatchesFragment : Fragment() {
         try {
             if (firebaseAuth.currentUser != null) {
                 firestore = FirebaseFirestore.getInstance()
-                firestore.collection("MyWatches").addSnapshotListener { documentSnapshots, e ->
+                firestore.collection("MyWatches/$user_id/submissions").addSnapshotListener { documentSnapshots, e ->
                     if (documentSnapshots != null) {
                         if (!documentSnapshots.isEmpty) {
                             for (doc in documentSnapshots.documentChanges) {

@@ -47,15 +47,20 @@ class SignupActivity : AppCompatActivity() {
                 )
             ) {
                 if (pass == c_pass) {
-                    signup_progress.visibility = View.VISIBLE
-                    mAuth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener { task ->
-                        if (task.isSuccessful) {
-                            user_id = mAuth.currentUser?.uid!!
-                            storeDataToFireStore()
-                        } else {
-                            Toast.makeText(this, "Error: ${task.exception!!.message}", Toast.LENGTH_LONG).show()
+                    if (checkBox.isChecked) {
+                        signup_progress.visibility = View.VISIBLE
+                        mAuth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener { task ->
+                            if (task.isSuccessful) {
+                                user_id = mAuth.currentUser?.uid!!
+                                storeDataToFireStore()
+                            } else {
+                                Toast.makeText(this, "Error: ${task.exception!!.message}", Toast.LENGTH_LONG).show()
+                            }
                         }
+                    } else {
+                        Toast.makeText(this, "Must be agreed to terms & conditions", Toast.LENGTH_SHORT).show()
                     }
+
                 } else {
                     Toast.makeText(this, "Passwords are not matching", Toast.LENGTH_SHORT).show()
                 }
