@@ -63,7 +63,7 @@
 
             <android.support.constraint.ConstraintLayout
                     android:layout_width="0dp"
-                    android:layout_height="200dp"
+                    android:layout_height="400dp"
                     android:background="#353535"
                     app:layout_constraintEnd_toEndOf="parent"
                     android:layout_marginEnd="16dp"
@@ -78,10 +78,11 @@
                     >
 
                 <ImageView
-                        android:layout_width="54dp"
-                        android:layout_height="54dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         app:srcCompat="@drawable/ic_camera_icon__white"
                         app:layout_constraintTop_toTopOf="parent"
+                        android:scaleType="fitXY"
                         android:layout_marginBottom="8dp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -96,7 +97,7 @@
 
             <LinearLayout
                     android:layout_width="0dp"
-                    android:layout_height="80dp"
+                    android:layout_height="95dp"
                     android:weightSum="1"
                     android:orientation="horizontal"
                     android:gravity="center_vertical"
@@ -112,7 +113,6 @@
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:id="@+id/first_img"
-                        android:padding="17dp"
                         android:background="#353535"
                         android:layout_weight=".3333"
                         >
@@ -130,7 +130,6 @@
                 <android.support.constraint.ConstraintLayout
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:padding="17dp"
                         android:id="@+id/second_img"
                         android:background="#353535"
                         android:layout_weight=".3333"
@@ -152,7 +151,6 @@
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:id="@+id/third_img"
-                        android:padding="17dp"
                         android:background="#353535"
                         android:layout_weight=".3333"
                         >

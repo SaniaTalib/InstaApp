@@ -90,8 +90,6 @@ class WatchesDetailActivity: AppCompatActivity() {
 
     }
 
-
-
     private fun loadPosts() {
         try {
             if (firebaseAuth.currentUser != null) {

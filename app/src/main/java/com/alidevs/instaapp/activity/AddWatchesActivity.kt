@@ -114,16 +114,58 @@ class AddWatchesActivity : AppCompatActivity() {
                         ) {
                             if (imgurl.size == mArrayUri.size) {
                                 val items = HashMap<String, Any>()
-                                items["image_url_primary"] = imgurl[0]
-                                items["image_url_first"] = imgurl[1]
-                                items["image_url_second"] = imgurl[2]
-                                items["image_url_third"] = imgurl[3]
-                                items["brand_name"] = edi_brand.text.toString()
-                                items["model"] = edt_model.text.toString()
-                                items["reference"] = edt_ref.text.toString()
-                                items["serial"] = edt_serial.text.toString()
-                                items["purchase_date"] = edt_date.text.toString()
-                                items["comments"] = edt_comment.text.toString()
+                               when(imgurl.size){
+                                   1 -> {
+                                       items["image_url_primary"] = imgurl[0]
+                                       items["image_url_first"] = ""
+                                       items["image_url_second"] = ""
+                                       items["image_url_third"] = ""
+                                       items["brand_name"] = edi_brand.text.toString()
+                                       items["model"] = edt_model.text.toString()
+                                       items["reference"] = edt_ref.text.toString()
+                                       items["serial"] = edt_serial.text.toString()
+                                       items["purchase_date"] = edt_date.text.toString()
+                                       items["comments"] = edt_comment.text.toString()
+                                   }
+
+                                   2 -> {
+                                       items["image_url_primary"] = imgurl[0]
+                                       items["image_url_first"] = imgurl[1]
+                                       items["image_url_second"] = ""
+                                       items["image_url_third"] = ""
+                                       items["brand_name"] = edi_brand.text.toString()
+                                       items["model"] = edt_model.text.toString()
+                                       items["reference"] = edt_ref.text.toString()
+                                       items["serial"] = edt_serial.text.toString()
+                                       items["purchase_date"] = edt_date.text.toString()
+                                       items["comments"] = edt_comment.text.toString()
+                                   }
+
+                                   3 -> {
+                                       items["image_url_primary"] = imgurl[0]
+                                       items["image_url_first"] = imgurl[1]
+                                       items["image_url_second"] = imgurl[2]
+                                       items["image_url_third"] = ""
+                                       items["brand_name"] = edi_brand.text.toString()
+                                       items["model"] = edt_model.text.toString()
+                                       items["reference"] = edt_ref.text.toString()
+                                       items["serial"] = edt_serial.text.toString()
+                                       items["purchase_date"] = edt_date.text.toString()
+                                       items["comments"] = edt_comment.text.toString()
+                                   }
+                                   4 -> {
+                                       items["image_url_primary"] = imgurl[0]
+                                       items["image_url_first"] = imgurl[1]
+                                       items["image_url_second"] = imgurl[2]
+                                       items["image_url_third"] = imgurl[3]
+                                       items["brand_name"] = edi_brand.text.toString()
+                                       items["model"] = edt_model.text.toString()
+                                       items["reference"] = edt_ref.text.toString()
+                                       items["serial"] = edt_serial.text.toString()
+                                       items["purchase_date"] = edt_date.text.toString()
+                                       items["comments"] = edt_comment.text.toString()
+                                   }
+                               }
 
                                 firestore.collection("MyWatches/$user_id/submissions").document().set(items)
                                     .addOnCompleteListener { task ->
@@ -133,11 +175,13 @@ class AddWatchesActivity : AppCompatActivity() {
                                             finish()
                                         }
                                     }.addOnFailureListener {
+                                        progressBar2.visibility = View.GONE
                                         Toast.makeText(this, "FireStore Error: ${it.message}", Toast.LENGTH_SHORT)
                                             .show()
                                     }
                             }
                         } else {
+                            progressBar2.visibility = View.GONE
                             Toast.makeText(this, "All Fields are mandatory to fill", Toast.LENGTH_LONG).show()
                         }
                     }

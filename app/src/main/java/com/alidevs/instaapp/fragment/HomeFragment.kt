@@ -29,6 +29,7 @@ import com.alidevs.instaapp.adapter.FullPageAdapter
 import com.alidevs.instaapp.adapter.GridViewAdapter
 import com.alidevs.instaapp.adapter.LeaderBoardAdapter
 import com.alidevs.instaapp.model.PostsModel
+import com.alidevs.instaapp.model.ThemeModel
 import com.alidevs.instaapp.utils.AppPreferences
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentChange
@@ -72,6 +73,7 @@ class HomeFragment : Fragment() {
     private lateinit var firebaseAuth: FirebaseAuth
     private lateinit var compressedImageFile: Bitmap
     private lateinit var posts_list: MutableList<PostsModel>
+    private lateinit var theme_list: MutableList<ThemeModel>
     private lateinit var leaderboard_list: MutableList<PostsModel>
     private lateinit var arrayList: ArrayList<PostsModel>
     private lateinit var txtTitle: TextView
@@ -106,10 +108,15 @@ class HomeFragment : Fragment() {
         storageReference = FirebaseStorage.getInstance().reference
         utils = AppPreferences(context!!)
         arrayList = ArrayList()
+        theme_list = ArrayList()
 
         loadPosts()
         loadLeaderboardPosts()
+        //loadTheme()
 
+        if (theme_list.size != 0) {
+            txtTag.text = theme_list[0].text
+        }
         /*******************HOME FRAGMENT**********************/
         val linearSnapHelper = PagerSnapHelper()
         linearSnapHelper.attachToRecyclerView(fullPage)
@@ -154,7 +161,9 @@ class HomeFragment : Fragment() {
         }
 
         galleryInactive.setOnClickListener {
-            txtTag.text = "#Speedy Saturday"
+            if (theme_list.size != 0) {
+                txtTag.text = theme_list[0].text
+            }
             txtTitle.text = "Gallery"
             galleryActive.visibility = View.VISIBLE
             pagerInactive.visibility = View.VISIBLE
@@ -168,7 +177,9 @@ class HomeFragment : Fragment() {
         }
 
         pagerInactive.setOnClickListener {
-            txtTag.text = "#Speedy Saturday"
+            if (theme_list.size != 0) {
+                txtTag.text = theme_list[0].text
+            }
             txtTitle.text = "Gallery"
             pagerActive.visibility = View.VISIBLE
             galleryInactive.visibility = View.VISIBLE
@@ -183,7 +194,9 @@ class HomeFragment : Fragment() {
 
         contestInactive.setOnClickListener {
 
-            txtTag.text = "#Speedy Saturday"
+            if (theme_list.size != 0) {
+                txtTag.text = theme_list[0].text
+            }
             txtTitle.text = "Top 10"
 
             contestInactive.visibility = View.GONE
@@ -408,4 +421,40 @@ class HomeFragment : Fragment() {
             }
         }
     }
+
+    /*private fun loadTheme() {
+        try {
+            val dateString = utils.getDate1()
+            val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.US)
+            var date1 = sdf.parse(dateString).toString()
+            if (firebaseAuth.currentUser != null) {
+
+                firestore = FirebaseFirestore.getInstance()
+
+                var nextQuery = firestore.collection("Posts")
+                    .orderBy("likes_count", Query.Direction.DESCENDING)
+                    .whereGreaterThan("likes_count", 0).limit(10)
+
+                nextQuery.addSnapshotListener { documentSnapshots, _ ->
+                    if (documentSnapshots != null) {
+                        if (!documentSnapshots.isEmpty) {
+                            for (doc in documentSnapshots.documentChanges) {
+                                if (doc.type === DocumentChange.Type.ADDED) {
+                                    val PostId = doc.document.id
+                                    val pojo = doc.document.toObject(ThemeModel::class.java).withId<ThemeModel>(PostId)
+
+                                    if (pojo.date == utils.getDate()) {
+                                        theme_list.add(pojo)
+                                    }
+
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }*/
 }
