@@ -12,19 +12,20 @@ import com.alidevs.instaapp.R
 import com.alidevs.instaapp.model.PostsModel
 import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.*
+import com.google.firebase.firestore.FirebaseFirestore
 
 
-class LeaderBoardAdapter(var context: Context, var list:MutableList<PostsModel>) : RecyclerView.Adapter<LeaderBoardAdapter.ViewHolder>() {
+class LeaderBoardAdapter(var context: Context, var list: MutableList<PostsModel>) :
+    RecyclerView.Adapter<LeaderBoardAdapter.ViewHolder>() {
 
     private var firebaseFirestore: FirebaseFirestore? = null
     private var firebaseAuth: FirebaseAuth? = null
 
 
-    inner class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
-        var image : ImageView = itemView.findViewById(R.id.img)
-        var txtLikes : TextView = itemView.findViewById(R.id.txt_likes)
-        var txtRank : TextView = itemView.findViewById(R.id.txt_rank)
+    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        var image: ImageView = itemView.findViewById(R.id.img)
+        var txtLikes: TextView = itemView.findViewById(R.id.txt_likes)
+        var txtRank: TextView = itemView.findViewById(R.id.txt_rank)
 
         init {
             firebaseFirestore = FirebaseFirestore.getInstance()
@@ -42,7 +43,7 @@ class LeaderBoardAdapter(var context: Context, var list:MutableList<PostsModel>)
         val item: PostsModel = list[position]
         val blogpostID = item.PostID
         val currentUserID = firebaseAuth!!.currentUser!!.uid
-        holder.txtRank.text = "Rank: ${position+1}"
+        holder.txtRank.text = "# ${position + 1}"
 
 
         //Get Likes Count
@@ -52,7 +53,7 @@ class LeaderBoardAdapter(var context: Context, var list:MutableList<PostsModel>)
                     if (!queryDocumentSnapshots.isEmpty) {
                         val count = queryDocumentSnapshots.size()
                         holder.txtLikes.text = "$count Likes"
-                        Log.d("#Count","$count Likes")
+                        Log.d("#Count", "$count Likes")
                     } else {
                         holder.txtLikes.text = "0 Likes"
                     }

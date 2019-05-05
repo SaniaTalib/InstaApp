@@ -73,7 +73,8 @@ class MyWatchesFragment : Fragment() {
                             for (doc in documentSnapshots.documentChanges) {
                                 if (doc.type === DocumentChange.Type.ADDED) {
                                     val postId = doc.document.id
-                                    val pojo = doc.document.toObject(WatchesModel::class.java).withId<WatchesModel>(postId)
+                                    val pojo =
+                                        doc.document.toObject(WatchesModel::class.java).withId<WatchesModel>(postId)
                                     posts_list.add(pojo)
                                     recyclerView!!.adapter?.notifyDataSetChanged()
                                 }

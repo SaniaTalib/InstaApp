@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
                                              xmlns:app="http://schemas.android.com/apk/res-auto"
-                                             xmlns:tools="http://schemas.android.com/tools"
                                              android:layout_width="match_parent"
                                              android:layout_height="match_parent"
         >
@@ -33,7 +32,7 @@
         <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="Liam Writes Collection"
+                android:text=""
                 android:layout_weight="0.333"
                 app:fontFamily="@font/montserrat_light"
                 android:textAlignment="center"
@@ -46,19 +45,18 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.333"
-                android:text="Rank:  1"
+                android:text="# 1"
                 android:id="@+id/txt_rank"
-                app:fontFamily="@font/montserrat_light"
+                app:fontFamily="@font/montserrat_bold"
                 android:textAlignment="center"
                 android:layout_gravity="center_vertical|center_horizontal"
-                android:textSize="18sp"
+                android:textSize="22sp"
                 android:textColor="@android:color/white"
                 />
 
         <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="1036 Likes"
                 android:layout_weight="0.333"
                 app:fontFamily="@font/montserrat_light"
                 android:textAlignment="center"

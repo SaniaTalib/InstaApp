@@ -20,6 +20,7 @@ class WatchesDetailActivity: AppCompatActivity() {
     private lateinit var firebaseAuth: FirebaseAuth
 
     private var user_id: String = ""
+    private var brand: String = ""
     private var ref: String = ""
     private var serial: String = ""
     private var pdate: String = ""
@@ -61,6 +62,7 @@ class WatchesDetailActivity: AppCompatActivity() {
             secondImg = bundle.getString("second_img")
             thirdImg = bundle.getString("third_img")
             comment = bundle.getString("comments")
+            brand = bundle.getString("brand_name")
         }
 
         //set values to views
@@ -68,6 +70,7 @@ class WatchesDetailActivity: AppCompatActivity() {
         txt_serial.text = serial
         txt_pdate.text = pdate
         txt_comment.text = comment
+        title_brand.text = brand
 
         Glide.with(this)
             .load(primaryImg)

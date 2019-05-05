@@ -49,6 +49,7 @@ class LoginActivity : AppCompatActivity(), AuthenticationListner {
                         signup_progress.visibility = View.GONE
                         val intent = Intent(this@LoginActivity, DashboardActivity::class.java)
                         startActivity(intent)
+                        finish()
                     } else {
                         signup_progress.visibility = View.GONE
                         Toast.makeText(this, "Error: ${task.exception!!.message}", Toast.LENGTH_LONG).show()
@@ -93,7 +94,6 @@ class LoginActivity : AppCompatActivity(), AuthenticationListner {
     private fun sendToLogin() {
         val intent = Intent(this, DashboardActivity::class.java)
         startActivity(intent)
-        finish()
     }
 
     override fun onStart() {
