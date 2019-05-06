@@ -64,12 +64,12 @@ class AppPreferences(context: Context) {
     fun getDate1(): String? {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val current = LocalDateTime.now()
-            val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+            val formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy")
             val answer = current.format(formatter)
             answer
         } else {
             val date = Date()
-            val formatter = SimpleDateFormat("dd/MM/yyyy")
+            val formatter = SimpleDateFormat("MM/dd/yyyy")
             val answer: String = formatter.format(date)
             answer
         }

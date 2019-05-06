@@ -11,11 +11,13 @@ import android.view.View
 import android.view.ViewGroup
 import com.alidevs.instaapp.R
 import com.alidevs.instaapp.adapter.NewsAdapter
+import com.alidevs.instaapp.model.Item
 import com.alidevs.instaapp.model.RSSObject
 import com.alidevs.instaapp.utils.HttpDataHandler
 import com.google.gson.Gson
 
-class NewsFragment : Fragment() {
+class NewsFragment : Fragment(), NewsAdapter.ItemClickListener {
+
 
     private val RSS_link="http://www.hodinkee.com%2Farticles%2Frss.xml"
     private val RSS_to_JSON_API="https://api.rss2json.com/v1/api.json?rss_url="
@@ -57,7 +59,7 @@ class NewsFragment : Fragment() {
             override fun onPostExecute(result: String?) {
                 mDialog.dismiss()
                 var rssObject: RSSObject = Gson().fromJson<RSSObject>(result,RSSObject::class.java!!)
-                val adapter=NewsAdapter(rssObject,context!!)
+                val adapter=NewsAdapter(rssObject,context!!,this@NewsFragment)
                 recyclerView.adapter=adapter
                 adapter.notifyDataSetChanged()
             }
@@ -68,4 +70,24 @@ class NewsFragment : Fragment() {
         loadRSSAsync.execute(url_get_data.toString())
 
     }
+
+    override fun onItemClicked(item: Item, position: Int) {
+        addFragment(NewsDetailFragment(), true,"NewsDetailFragment", item.link)
+    }
+
+    private fun addFragment(fragment: Fragment, addToBackStack: Boolean, tag: String, item: String) {
+        val manager = activity?.supportFragmentManager
+        val ft = manager!!.beginTransaction()
+
+        if (addToBackStack) {
+            ft.addToBackStack(tag)
+        }
+        val ldf = fragment
+        val args = Bundle()
+        args.putString("url", item)
+        ldf.arguments = args
+        ft.replace(R.id.content_main, fragment, tag)
+        ft.commit()
+    }
+
 }

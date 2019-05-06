@@ -8,6 +8,7 @@ import android.view.View
 import android.widget.Toast
 import com.alidevs.instaapp.R
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.activity_signup.*
 
@@ -22,6 +23,10 @@ class SignupActivity : AppCompatActivity() {
         setContentView(R.layout.activity_signup)
 
         setSupportActionBar(toolbar)
+
+        mAuth = FirebaseAuth.getInstance()
+        user_id = mAuth.currentUser!!.uid
+        firestore = FirebaseFirestore.getInstance()
         val actionBar = supportActionBar
         toolbar.setNavigationIcon(R.drawable.ic_back_arrow)
         toolbar.setNavigationOnClickListener {
@@ -81,6 +86,7 @@ class SignupActivity : AppCompatActivity() {
         val items = HashMap<String, Any>()
         items["name"] = signup_user_name.text.toString()
         items["email"] = signup_email.text.toString()
+        items["lastactive"] = FieldValue.serverTimestamp()
 
         firestore.collection("users").document(user_id).set(items)
             .addOnCompleteListener {
@@ -100,6 +106,21 @@ class SignupActivity : AppCompatActivity() {
 
     private fun sendToLogin() {
         val intent = Intent(this, DashboardActivity::class.java)
+        startActivity(intent)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        val currentUser = mAuth.currentUser?.uid
+        if (currentUser == null) {
+            sendToLogin1()
+        }else{
+            firestore!!.collection("users").document(currentUser).update("lastactive", FieldValue.serverTimestamp())
+        }
+    }
+
+    private fun sendToLogin1() {
+        val intent = Intent(this, LoginActivity::class.java)
         startActivity(intent)
         finish()
     }

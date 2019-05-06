@@ -16,6 +16,7 @@ import android.widget.Toast
 import com.alidevs.instaapp.R
 import com.alidevs.instaapp.utils.AppPreferences
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
@@ -281,6 +282,22 @@ class AddWatchesActivity : AppCompatActivity() {
         val myFormat = "dd MMM yyyy"
         val sdf = SimpleDateFormat(myFormat, Locale.US)
         edt_date!!.text = sdf.format(cal.time)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        val currentUser = firebaseAuth.currentUser?.uid
+        if (currentUser == null) {
+            sendToLogin()
+        }else{
+            firestore!!.collection("users").document(currentUser).update("lastactive", FieldValue.serverTimestamp())
+        }
+    }
+
+    private fun sendToLogin() {
+        val intent = Intent(this, LoginActivity::class.java)
+        startActivity(intent)
+        finish()
     }
 }
 

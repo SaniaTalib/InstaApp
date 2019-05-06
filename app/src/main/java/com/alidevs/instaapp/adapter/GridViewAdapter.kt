@@ -9,7 +9,7 @@ import com.alidevs.instaapp.R
 import com.alidevs.instaapp.model.PostsModel
 import com.bumptech.glide.Glide
 
-class GridViewAdapter(var list:MutableList<PostsModel>) : RecyclerView.Adapter<GridViewAdapter.ViewHolder>() {
+class GridViewAdapter(var list:MutableList<PostsModel>, private val listener: ItemClickListener) : RecyclerView.Adapter<GridViewAdapter.ViewHolder>() {
 
     inner class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
         var image : ImageView = itemView.findViewById(R.id.img)
@@ -24,6 +24,10 @@ class GridViewAdapter(var list:MutableList<PostsModel>) : RecyclerView.Adapter<G
         holder.setIsRecyclable(false)
         val item : PostsModel = list[position]
 
+        holder.itemView.setOnClickListener{
+            listener.onItemClicked(list[position],position)
+        }
+
         val userID = item.user_id
         Glide.with(holder.itemView.context)
             .load(item.image_url)
@@ -31,4 +35,8 @@ class GridViewAdapter(var list:MutableList<PostsModel>) : RecyclerView.Adapter<G
     }
 
     override fun getItemCount() = list.size
+
+    interface ItemClickListener {
+        fun onItemClicked(item: PostsModel, position: Int)
+    }
 }

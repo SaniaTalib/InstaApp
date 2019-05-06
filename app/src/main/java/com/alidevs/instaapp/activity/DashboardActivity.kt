@@ -12,11 +12,19 @@ import android.view.View
 import com.alidevs.instaapp.R
 import com.alidevs.instaapp.adapter.ViewPagerAdapter
 import com.alidevs.instaapp.fragment.MyWatchesFragment
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
 import kotlinx.android.synthetic.main.activity_dashboard2.*
 import kotlinx.android.synthetic.main.app_bar_dashboard.*
 import kotlinx.android.synthetic.main.content_dashboard.*
 
 class DashboardActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+
+    private lateinit var firestore: FirebaseFirestore
+    private lateinit var firebaseAuth: FirebaseAuth
+    private lateinit var user_id: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,6 +32,9 @@ class DashboardActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         setSupportActionBar(toolbar)
         //setupHomeFragment()
         setupViewPager()
+        firebaseAuth = FirebaseAuth.getInstance()
+        user_id = firebaseAuth.currentUser!!.uid
+        firestore = FirebaseFirestore.getInstance()
         val actionBar = supportActionBar
         actionBar!!.title = ""
         actionBar.elevation = 4.0F
@@ -79,6 +90,10 @@ class DashboardActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
                 setupHomeFragment(SettingsActivity())
                 tablayout.visibility = View.GONE
             }
+            R.id.logout -> {
+                FirebaseAuth.getInstance().signOut()
+                sendToLogin()
+            }
         }
         drawer_layout.closeDrawer(GravityCompat.START)
         return true
@@ -88,5 +103,21 @@ class DashboardActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         val fragmentManager = supportFragmentManager
         fragmentManager.popBackStack()
         fragmentManager.beginTransaction().add(R.id.content_main, fragment).commit()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        val currentUser = firebaseAuth.currentUser?.uid
+        if (currentUser == null) {
+            sendToLogin()
+        }else{
+            firestore.collection("users").document(currentUser).update("lastactive", FieldValue.serverTimestamp())
+        }
+    }
+
+    private fun sendToLogin() {
+        val intent = Intent(this, LoginActivity::class.java)
+        startActivity(intent)
+        finish()
     }
 }

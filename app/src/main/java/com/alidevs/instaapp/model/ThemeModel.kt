@@ -4,6 +4,9 @@ class ThemeModel: PostID {
     var date: String? = null
     var text: String? = null
 
+
+    constructor(){}
+
     constructor(date: String, text: String) {
         this.date = date
         this.text = text

@@ -9,17 +9,25 @@ import com.alidevs.instaapp.R
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.activity_update_password.*
 
 class UpdatePasswordActivity : AppCompatActivity() {
 
     private lateinit var mAuth: FirebaseAuth
+    private lateinit var firestore: FirebaseFirestore
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_update_password)
         setSupportActionBar(update_password_toolbar)
         val actionBar = supportActionBar
+
+        mAuth = FirebaseAuth.getInstance()
+        firestore = FirebaseFirestore.getInstance()
+
         update_password_toolbar.setNavigationIcon(R.drawable.ic_back_arrow)
         update_password_toolbar.setNavigationOnClickListener {
             onBackPressed()
@@ -79,6 +87,22 @@ class UpdatePasswordActivity : AppCompatActivity() {
             signup_progress.visibility = View.GONE
             Toast.makeText(this, "Please Fill all .....", Toast.LENGTH_SHORT).show()
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        val currentUser = mAuth.currentUser?.uid
+        if (currentUser == null) {
+            sendToLogin1()
+        }else{
+            firestore!!.collection("users").document(currentUser).update("lastactive", FieldValue.serverTimestamp())
+        }
+    }
+
+    private fun sendToLogin1() {
+        val intent = Intent(this, LoginActivity::class.java)
+        startActivity(intent)
+        finish()
     }
 
 }

@@ -48,7 +48,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 
-class HomeFragment : Fragment() {
+class HomeFragment : Fragment(), GridViewAdapter.ItemClickListener {
 
     val TAG = HomeFragment::getTag.toString()
     private lateinit var utils: AppPreferences
@@ -112,11 +112,11 @@ class HomeFragment : Fragment() {
 
         loadPosts()
         loadLeaderboardPosts()
-        //loadTheme()
+        loadTheme()
 
-        if (theme_list.size != 0) {
-            txtTag.text = theme_list[0].text
-        }
+        /* if (theme_list.size != 0) {
+
+         }*/
         /*******************HOME FRAGMENT**********************/
         val linearSnapHelper = PagerSnapHelper()
         linearSnapHelper.attachToRecyclerView(fullPage)
@@ -125,7 +125,7 @@ class HomeFragment : Fragment() {
         fullPage.layoutManager = LinearLayoutManager(context)
         fullPage.adapter = context?.let { FullPageAdapter(context!!, posts_list) }
         recyclerView.layoutManager = GridLayoutManager(context, 3)
-        recyclerView.adapter = context?.let { GridViewAdapter(posts_list) }
+        recyclerView.adapter = context?.let { GridViewAdapter(posts_list, this@HomeFragment) }
         leaderBoard.layoutManager = LinearLayoutManager(context)
         leaderBoard.adapter = context?.let { LeaderBoardAdapter(context!!, leaderboard_list) }
 
@@ -161,9 +161,6 @@ class HomeFragment : Fragment() {
         }
 
         galleryInactive.setOnClickListener {
-            if (theme_list.size != 0) {
-                txtTag.text = theme_list[0].text
-            }
             txtTitle.text = "Gallery"
             galleryActive.visibility = View.VISIBLE
             pagerInactive.visibility = View.VISIBLE
@@ -177,9 +174,6 @@ class HomeFragment : Fragment() {
         }
 
         pagerInactive.setOnClickListener {
-            if (theme_list.size != 0) {
-                txtTag.text = theme_list[0].text
-            }
             txtTitle.text = "Gallery"
             pagerActive.visibility = View.VISIBLE
             galleryInactive.visibility = View.VISIBLE
@@ -193,15 +187,11 @@ class HomeFragment : Fragment() {
         }
 
         contestInactive.setOnClickListener {
-
-            if (theme_list.size != 0) {
-                txtTag.text = theme_list[0].text
-            }
             txtTitle.text = "Top 10"
-
             contestInactive.visibility = View.GONE
             pagerInactive.visibility = View.VISIBLE
             galleryInactive.visibility = View.VISIBLE
+            galleryActive.visibility = View.GONE
             contestActive.visibility = View.VISIBLE
             leaderBoard.visibility = View.VISIBLE
 
@@ -237,7 +227,7 @@ class HomeFragment : Fragment() {
     private fun compressImage() {
         signupProgress.visibility = View.VISIBLE
         val randonName = UUID.randomUUID().toString()
-        val newimage = File(mainUril!!.path)
+        val newimage = File(mainUril.path)
         try {
             compressedImageFile = Compressor(this.activity)
                 .setMaxHeight(720)
@@ -259,7 +249,7 @@ class HomeFragment : Fragment() {
         }.addOnSuccessListener {
             val downloadurl = ref.downloadUrl
             if (it.task.isSuccessful) {
-                val newthumbfile = File(mainUril!!.path)
+                val newthumbfile = File(mainUril.path)
                 try {
                     compressedImageFile = Compressor(this.activity)
                         .setMaxHeight(100)
@@ -280,7 +270,7 @@ class HomeFragment : Fragment() {
                 }.addOnSuccessListener {
                     val downloadurl = ref.downloadUrl
                     if (it.task.isSuccessful) {
-                        val newthumbfile = File(mainUril!!.path)
+                        val newthumbfile = File(mainUril.path)
                         try {
                             compressedImageFile = Compressor(this.activity)
                                 .setMaxHeight(100)
@@ -303,8 +293,6 @@ class HomeFragment : Fragment() {
                             val downloadthumburl = downloadurl.result
                             val items = HashMap<String, Any>()
                             val dateString = AppPreferences(context!!).getCurrentDate()
-                            //DocumentReference userRef = db.collection("company").document("users");
-                            //val userRef = firestore.collection("users/$user_id")
                             items["image_url"] = downloadurl.result.toString()
                             items["image_thumb"] = downloadthumburl.toString()
                             items["reference"] = downloadthumburl.toString()
@@ -333,9 +321,11 @@ class HomeFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
-        val currentUser = firebaseAuth.currentUser
+        val currentUser = firebaseAuth.currentUser?.uid
         if (currentUser == null) {
             sendToLogin()
+        }else{
+            firestore.collection("users").document(currentUser).update("lastactive", FieldValue.serverTimestamp())
         }
     }
 
@@ -422,18 +412,16 @@ class HomeFragment : Fragment() {
         }
     }
 
-    /*private fun loadTheme() {
+    private fun loadTheme() {
         try {
             val dateString = utils.getDate1()
-            val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.US)
+            val sdf = SimpleDateFormat("MM/dd/yyyy", Locale.US)
             var date1 = sdf.parse(dateString).toString()
             if (firebaseAuth.currentUser != null) {
 
                 firestore = FirebaseFirestore.getInstance()
 
-                var nextQuery = firestore.collection("Posts")
-                    .orderBy("likes_count", Query.Direction.DESCENDING)
-                    .whereGreaterThan("likes_count", 0).limit(10)
+                var nextQuery = firestore.collection("Theme")
 
                 nextQuery.addSnapshotListener { documentSnapshots, _ ->
                     if (documentSnapshots != null) {
@@ -443,8 +431,10 @@ class HomeFragment : Fragment() {
                                     val PostId = doc.document.id
                                     val pojo = doc.document.toObject(ThemeModel::class.java).withId<ThemeModel>(PostId)
 
-                                    if (pojo.date == utils.getDate()) {
+                                    if (pojo.date == utils.getDate1()) {
                                         theme_list.add(pojo)
+                                        txtTag.text = "#${theme_list[theme_list.size-1].text}"
+                                        /*theme_list.add(pojo)*/
                                     }
 
                                 }
@@ -456,5 +446,15 @@ class HomeFragment : Fragment() {
         } catch (e: Exception) {
             e.printStackTrace()
         }
-    }*/
+    }
+
+    override fun onItemClicked(item: PostsModel, position: Int) {
+        fullPage.visibility = View.VISIBLE
+        recyclerView.visibility = View.GONE
+        fullPage.smoothScrollToPosition(position)
+        galleryActive.visibility = View.GONE
+        galleryInactive.visibility = View.VISIBLE
+        pagerActive.visibility = View.VISIBLE
+        pagerInactive.visibility = View.GONE
+    }
 }

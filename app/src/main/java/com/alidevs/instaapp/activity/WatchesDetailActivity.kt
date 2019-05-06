@@ -1,5 +1,6 @@
 package com.alidevs.instaapp.activity
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import com.alidevs.instaapp.R
@@ -7,6 +8,7 @@ import com.alidevs.instaapp.model.WatchesModel
 import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentChange
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
@@ -111,5 +113,21 @@ class WatchesDetailActivity: AppCompatActivity() {
         } catch (e: Exception) {
             e.printStackTrace()
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        val currentUser = firebaseAuth.currentUser?.uid
+        if (currentUser == null) {
+            sendToLogin()
+        }else{
+            firestore!!.collection("users").document(currentUser).update("lastactive", FieldValue.serverTimestamp())
+        }
+    }
+
+    private fun sendToLogin() {
+        val intent = Intent(this, LoginActivity::class.java)
+        startActivity(intent)
+        finish()
     }
 }

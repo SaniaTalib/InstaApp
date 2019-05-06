@@ -13,10 +13,12 @@ import android.view.ViewGroup
 import android.widget.Button
 import com.alidevs.instaapp.R
 import com.alidevs.instaapp.activity.AddWatchesActivity
+import com.alidevs.instaapp.activity.LoginActivity
 import com.alidevs.instaapp.adapter.MyWatchesAdapter
 import com.alidevs.instaapp.model.WatchesModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentChange
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
@@ -86,5 +88,21 @@ class MyWatchesFragment : Fragment() {
         } catch (e: Exception) {
             e.printStackTrace()
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        val currentUser = firebaseAuth.currentUser?.uid
+        if (currentUser == null) {
+            sendToLogin()
+        }else{
+            firestore!!.collection("users").document(currentUser).update("lastactive", FieldValue.serverTimestamp())
+        }
+    }
+
+    private fun sendToLogin() {
+        val intent = Intent(activity!!, LoginActivity::class.java)
+        startActivity(intent)
+        activity!!.finish()
     }
 }
