@@ -29,7 +29,9 @@ class LoginActivity : AppCompatActivity(), AuthenticationListner {
         val actionBar = supportActionBar
         toolbar.setNavigationIcon(R.drawable.ic_back_arrow)
         toolbar.setNavigationOnClickListener {
-            onBackPressed()
+            val intent = Intent(this@LoginActivity, CreateNewLoginActivity::class.java)
+            startActivity(intent)
+            finishAffinity()
         }
         actionBar!!.title = ""
         actionBar.elevation = 4.0F
@@ -101,5 +103,12 @@ class LoginActivity : AppCompatActivity(), AuthenticationListner {
         if (currentuser != null) {
             sendToLogin()
         }
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        val intent = Intent(this@LoginActivity, CreateNewLoginActivity::class.java)
+        startActivity(intent)
+        finishAffinity()
     }
 }

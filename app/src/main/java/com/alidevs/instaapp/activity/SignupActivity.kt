@@ -24,9 +24,9 @@ class SignupActivity : AppCompatActivity() {
 
         setSupportActionBar(toolbar)
 
-        mAuth = FirebaseAuth.getInstance()
+        /*mAuth = FirebaseAuth.getInstance()
         user_id = mAuth.currentUser!!.uid
-        firestore = FirebaseFirestore.getInstance()
+        firestore = FirebaseFirestore.getInstance()*/
         val actionBar = supportActionBar
         toolbar.setNavigationIcon(R.drawable.ic_back_arrow)
         toolbar.setNavigationOnClickListener {
@@ -97,10 +97,10 @@ class SignupActivity : AppCompatActivity() {
                 } else {
                     signup_progress.visibility = View.GONE
                     Toast.makeText(this, "Fire Store Error: " + it.exception!!.message, Toast.LENGTH_SHORT).show()
-                    //   setup_progress.visibility = View.GONE
                 }
             }.addOnFailureListener {
-
+                signup_progress.visibility = View.GONE
+                Toast.makeText(this, "Network: " + it.message, Toast.LENGTH_SHORT).show()
             }
     }
 
@@ -108,21 +108,11 @@ class SignupActivity : AppCompatActivity() {
         val intent = Intent(this, DashboardActivity::class.java)
         startActivity(intent)
     }
-
     override fun onStart() {
         super.onStart()
-        val currentUser = mAuth.currentUser?.uid
-        if (currentUser == null) {
-            sendToLogin1()
-        }else{
-            firestore!!.collection("users").document(currentUser).update("lastactive", FieldValue.serverTimestamp())
+        val currentuser = mAuth.currentUser
+        if (currentuser != null) {
+            sendToLogin()
         }
     }
-
-    private fun sendToLogin1() {
-        val intent = Intent(this, LoginActivity::class.java)
-        startActivity(intent)
-        finish()
-    }
-
 }

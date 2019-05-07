@@ -225,6 +225,7 @@ class HomeFragment : Fragment(), GridViewAdapter.ItemClickListener {
     }
 
     private fun compressImage() {
+        var username = ""
         signupProgress.visibility = View.VISIBLE
         val randonName = UUID.randomUUID().toString()
         val newimage = File(mainUril.path)
@@ -287,6 +288,24 @@ class HomeFragment : Fragment(), GridViewAdapter.ItemClickListener {
                         val uploadTask: UploadTask = storageReference.child("post_images/thumbs")
                             .child("$randonName.jpg").putBytes(thumbdata)
 
+
+
+                        firestore.collection("users").document(user_id).get()
+                            .addOnCompleteListener { task ->
+                                if (task.isSuccessful) {
+                                    val document = task.result
+                                    if (document != null) {
+                                        username = document.getString("name").toString()
+                                    } else {
+                                        Log.d("LOGGER", "No such document")
+                                    }
+                                } else {
+                                    Log.d("LOGGER", "get failed with ", task.exception);
+                                }
+                            }
+
+
+
                         uploadTask.addOnFailureListener {
                             Toast.makeText(this.activity, "Error: ${it.message}", Toast.LENGTH_SHORT).show()
                         }.addOnSuccessListener {
@@ -299,6 +318,7 @@ class HomeFragment : Fragment(), GridViewAdapter.ItemClickListener {
                             items["date_time"] = dateString.toString()
                             items["timestamp"] = FieldValue.serverTimestamp()
                             items["likes_count"] = 0
+                            items["user_name"] = username
 
                             firestore.collection("Posts").add(items)
                                 .addOnCompleteListener {
@@ -324,7 +344,7 @@ class HomeFragment : Fragment(), GridViewAdapter.ItemClickListener {
         val currentUser = firebaseAuth.currentUser?.uid
         if (currentUser == null) {
             sendToLogin()
-        }else{
+        } else {
             firestore.collection("users").document(currentUser).update("lastactive", FieldValue.serverTimestamp())
         }
     }
@@ -401,9 +421,7 @@ class HomeFragment : Fragment(), GridViewAdapter.ItemClickListener {
 
                             }
                             if (doc.type == DocumentChange.Type.MODIFIED) {
-
                                 leaderBoard.adapter?.notifyDataSetChanged()
-
                             }
                         }
                     }
@@ -433,7 +451,7 @@ class HomeFragment : Fragment(), GridViewAdapter.ItemClickListener {
 
                                     if (pojo.date == utils.getDate1()) {
                                         theme_list.add(pojo)
-                                        txtTag.text = "#${theme_list[theme_list.size-1].text}"
+                                        txtTag.text = "#${theme_list[theme_list.size - 1].text}"
                                         /*theme_list.add(pojo)*/
                                     }
 
@@ -457,4 +475,6 @@ class HomeFragment : Fragment(), GridViewAdapter.ItemClickListener {
         pagerActive.visibility = View.VISIBLE
         pagerInactive.visibility = View.GONE
     }
+
+
 }

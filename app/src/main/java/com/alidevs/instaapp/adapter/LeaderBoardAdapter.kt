@@ -26,6 +26,7 @@ class LeaderBoardAdapter(var context: Context, var list: MutableList<PostsModel>
         var image: ImageView = itemView.findViewById(R.id.img)
         var txtLikes: TextView = itemView.findViewById(R.id.txt_likes)
         var txtRank: TextView = itemView.findViewById(R.id.txt_rank)
+        var userName: TextView = itemView.findViewById(R.id.user_name)
 
         init {
             firebaseFirestore = FirebaseFirestore.getInstance()
@@ -44,6 +45,7 @@ class LeaderBoardAdapter(var context: Context, var list: MutableList<PostsModel>
         val blogpostID = item.PostID
         val currentUserID = firebaseAuth!!.currentUser!!.uid
         holder.txtRank.text = "# ${position + 1}"
+        holder.userName.text = item.user_name
 
 
         //Get Likes Count

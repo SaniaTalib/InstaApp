@@ -15,7 +15,6 @@ import com.alidevs.instaapp.fragment.MyWatchesFragment
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.storage.FirebaseStorage
 import kotlinx.android.synthetic.main.activity_dashboard2.*
 import kotlinx.android.synthetic.main.app_bar_dashboard.*
 import kotlinx.android.synthetic.main.content_dashboard.*
@@ -25,12 +24,13 @@ class DashboardActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     private lateinit var firestore: FirebaseFirestore
     private lateinit var firebaseAuth: FirebaseAuth
     private lateinit var user_id: String
+    var doubleBackToExitPressedOnce = false
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_dashboard2)
         setSupportActionBar(toolbar)
-        //setupHomeFragment()
         setupViewPager()
         firebaseAuth = FirebaseAuth.getInstance()
         user_id = firebaseAuth.currentUser!!.uid
@@ -110,7 +110,7 @@ class DashboardActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         val currentUser = firebaseAuth.currentUser?.uid
         if (currentUser == null) {
             sendToLogin()
-        }else{
+        } else {
             firestore.collection("users").document(currentUser).update("lastactive", FieldValue.serverTimestamp())
         }
     }
@@ -118,6 +118,5 @@ class DashboardActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     private fun sendToLogin() {
         val intent = Intent(this, LoginActivity::class.java)
         startActivity(intent)
-        finish()
     }
 }

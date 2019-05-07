@@ -13,7 +13,6 @@ class CreateNewLoginActivity : AppCompatActivity() {
         setContentView(R.layout.activity_create_new_login)
 
         login_btn.setOnClickListener {
-
             val intent =Intent(this, LoginActivity::class.java)
             startActivity(intent)
         }
