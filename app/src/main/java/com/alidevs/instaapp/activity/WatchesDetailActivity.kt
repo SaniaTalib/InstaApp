@@ -31,6 +31,8 @@ class WatchesDetailActivity: AppCompatActivity() {
     private var secondImg: String = ""
     private var thirdImg: String = ""
     private var comment: String = ""
+    private var model: String = ""
+    private var id: String = ""
     private lateinit var posts_list: MutableList<WatchesModel>
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,9 +58,11 @@ class WatchesDetailActivity: AppCompatActivity() {
 
         if(bundle!=null)
         {
+            id = bundle.getString("post_id")
             ref = bundle.getString("reference")
             serial = bundle.getString("serial")
             pdate = bundle.getString("pdate")
+            model = bundle.getString("model")
             primaryImg = bundle.getString("primary_img")
             firstImg = bundle.getString("first_img")
             secondImg = bundle.getString("second_img")
@@ -90,29 +94,22 @@ class WatchesDetailActivity: AppCompatActivity() {
             .load(thirdImg)
             .into(img_three)
 
-    }
-
-    private fun loadPosts() {
-        try {
-            if (firebaseAuth.currentUser != null) {
-                firestore = FirebaseFirestore.getInstance()
-                firestore.collection("MyWatches").addSnapshotListener { documentSnapshots, e ->
-                    if (documentSnapshots != null) {
-                        if (!documentSnapshots.isEmpty) {
-                            for (doc in documentSnapshots.documentChanges) {
-                                if (doc.type === DocumentChange.Type.ADDED) {
-                                    val postId = doc.document.id
-                                    val pojo = doc.document.toObject(WatchesModel::class.java).withId<WatchesModel>(postId)
-                                    posts_list.add(pojo)
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
+        txt_edit.setOnClickListener {
+            val intent = Intent(this@WatchesDetailActivity, EditwatchesActivity::class.java)
+            intent.putExtra("reference", ref)
+            intent.putExtra("brand_name", brand)
+            intent.putExtra("post_id", id)
+            intent.putExtra("model", model)
+            intent.putExtra("serial", serial)
+            intent.putExtra("pdate", pdate)
+            intent.putExtra("comments", comment)
+            intent.putExtra("primary_img", primaryImg)
+            intent.putExtra("first_img", firstImg)
+            intent.putExtra("second_img", secondImg)
+            intent.putExtra("third_img", thirdImg)
+            startActivity(intent)
         }
+
     }
 
     override fun onStart() {

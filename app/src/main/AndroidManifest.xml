@@ -15,6 +15,8 @@
             android:supportsRtl="true"
             android:theme="@style/AppTheme"
             tools:ignore="GoogleAppIndexingWarning">
+        <activity android:name=".activity.EditwatchesActivity">
+        </activity>
         <activity
                 android:name=".activity.DashboardActivity"
                 android:label="@string/title_activity_dashboard"
@@ -26,20 +28,18 @@
         </activity>
         <activity android:name=".activity.SignupActivity">
         </activity>
-        <activity android:name=".activity.OnBoardActivity">
+        <activity android:name=".activity.CreateNewLoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".activity.CreateNewLoginActivity"/>
+        <activity android:name=".activity.OnBoardActivity"/>
         <activity android:name=".activity.AddWatchesActivity"/>
         <activity android:name=".activity.ForgotPasswordActivity"/>
-
         <activity android:name=".UpdateEmailActivity"/>
         <activity android:name=".activity.UpdatePasswordActivity"/>
-
         <activity
                 android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
                 android:theme="@style/Base.Theme.AppCompat"/>
@@ -48,7 +48,6 @@
         <meta-data
                 android:name="preloaded_fonts"
                 android:resource="@array/preloaded_fonts"/>
-
     </application>
 
 </manifest>

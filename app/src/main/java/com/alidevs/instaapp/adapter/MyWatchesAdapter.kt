@@ -42,8 +42,10 @@ class MyWatchesAdapter(var context: Context, var list: MutableList<WatchesModel>
 
         holder.itemView.setOnClickListener {
             val intent = Intent(context, WatchesDetailActivity::class.java)
+            intent.putExtra("id",item.PostID)
             intent.putExtra("reference", item.reference)
             intent.putExtra("brand_name", item.brand_name)
+            intent.putExtra("model", item.model)
             intent.putExtra("post_id", item.PostID)
             intent.putExtra("serial", item.serial)
             intent.putExtra("pdate", item.purchase_date)

@@ -61,107 +61,6 @@
                 >
 
 
-            <android.support.constraint.ConstraintLayout
-                    android:layout_width="0dp"
-                    android:layout_height="300dp"
-                    android:background="#353535"
-                    android:layout_marginEnd="16dp"
-                    android:layout_marginRight="16dp"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="8dp"
-                    android:id="@+id/constraintLayout3"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintHorizontal_bias="0.498"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    >
-
-                <ImageView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        app:srcCompat="@drawable/ic_camera_icon__white"
-                        app:layout_constraintTop_toTopOf="parent"
-                        android:scaleType="fitXY"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        android:id="@+id/img_primary"
-                        />
-            </android.support.constraint.ConstraintLayout>
-
-            <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="95dp"
-                    android:weightSum="1"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    app:layout_constraintTop_toBottomOf="@+id/constraintLayout3"
-                    android:layout_marginTop="8dp"
-                    app:layout_constraintEnd_toEndOf="@+id/constraintLayout3"
-                    app:layout_constraintStart_toStartOf="@+id/constraintLayout3"
-                    android:id="@+id/linearLayout"
-                    >
-
-
-                <android.support.constraint.ConstraintLayout
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:id="@+id/first_img"
-                        android:background="#353535"
-                        android:layout_weight=".3333"
-                        >
-
-                    <ImageView
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            app:srcCompat="@drawable/ic_camera_icon__white"
-                            android:id="@+id/img_one"
-
-                            />
-
-                </android.support.constraint.ConstraintLayout>
-
-                <android.support.constraint.ConstraintLayout
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:id="@+id/second_img"
-                        android:background="#353535"
-                        android:layout_weight=".3333"
-                        android:layout_marginStart="4dp"
-                        android:layout_marginEnd="4dp"
-                        >
-
-                    <ImageView
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            app:srcCompat="@drawable/ic_camera_icon__white"
-                            android:id="@+id/img_two"
-
-                            />
-
-                </android.support.constraint.ConstraintLayout>
-
-                <android.support.constraint.ConstraintLayout
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:id="@+id/third_img"
-                        android:background="#353535"
-                        android:layout_weight=".3333"
-                        >
-
-                    <ImageView
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            app:srcCompat="@drawable/ic_camera_icon__white"
-                            android:id="@+id/img_three"
-
-                            />
-
-                </android.support.constraint.ConstraintLayout>
-
-            </LinearLayout>
-
             <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -169,10 +68,10 @@
                     android:textAllCaps="true"
                     android:textColor="@color/gold"
                     android:textSize="14sp"
-                    app:layout_constraintTop_toBottomOf="@+id/linearLayout"
-                    app:layout_constraintStart_toStartOf="@+id/linearLayout"
-                    android:layout_marginTop="24dp"
+                    android:layout_marginTop="8dp"
                     android:id="@+id/textView12"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:layout_editor_absoluteX="16dp"
                     />
 
             <EditText
@@ -278,11 +177,11 @@
                     android:textColor="@color/gold"
                     android:textSize="14sp"
                     app:layout_constraintTop_toBottomOf="@+id/edt_ref"
-                    app:layout_constraintStart_toStartOf="@+id/linearLayout"
                     android:id="@+id/txt_serial"
                     app:layout_constraintEnd_toEndOf="@+id/edt_ref"
-                    app:layout_constraintHorizontal_bias="0.0"
                     android:layout_marginTop="8dp"
+                    app:layout_constraintStart_toStartOf="@+id/edt_ref"
+                    app:layout_constraintHorizontal_bias="0.0"
                     />
 
             <EditText
@@ -318,27 +217,27 @@
                     app:layout_constraintStart_toStartOf="@+id/edt_serial"
                     android:layout_marginTop="8dp"
                     />
-<!--
-            <EditText
-                    android:layout_width="0dp"
-                    android:layout_height="50dp"
-                    android:inputType="textPersonName"
-                    android:ems="10"
-                    android:paddingLeft="5dp"
-                    android:fontFamily="@font/montserrat_regular"
-                    android:background="@color/colorPrimary"
-                    android:hint="7th March 2018"
-                    android:textSize="14sp"
+            <!--
+                        <EditText
+                                android:layout_width="0dp"
+                                android:layout_height="50dp"
+                                android:inputType="textPersonName"
+                                android:ems="10"
+                                android:paddingLeft="5dp"
+                                android:fontFamily="@font/montserrat_regular"
+                                android:background="@color/colorPrimary"
+                                android:hint="7th March 2018"
+                                android:textSize="14sp"
 
-                    android:textColorHint="@color/grey"
-                    android:textColor="@color/grey"
-                    android:id="@+id/edt_date"
-                    app:layout_constraintEnd_toEndOf="@+id/edt_serial"
-                    app:layout_constraintTop_toBottomOf="@+id/p_date"
-                    app:layout_constraintStart_toStartOf="@+id/edt_serial"
-                    app:layout_constraintHorizontal_bias="1.0"
-                    android:layout_marginTop="8dp"
-                    />-->
+                                android:textColorHint="@color/grey"
+                                android:textColor="@color/grey"
+                                android:id="@+id/edt_date"
+                                app:layout_constraintEnd_toEndOf="@+id/edt_serial"
+                                app:layout_constraintTop_toBottomOf="@+id/p_date"
+                                app:layout_constraintStart_toStartOf="@+id/edt_serial"
+                                app:layout_constraintHorizontal_bias="1.0"
+                                android:layout_marginTop="8dp"
+                                />-->
 
             <Button
                     android:layout_width="0dp"
@@ -380,7 +279,6 @@
                     />
 
             <EditText
-                    app:layout_constraintEnd_toEndOf="@+id/linearLayout"
                     android:layout_width="0dp"
                     android:layout_height="50dp"
                     android:inputType="textPersonName"
@@ -393,11 +291,12 @@
                     android:textColorHint="@color/grey"
                     android:textColor="@android:color/white"
                     android:id="@+id/edi_brand"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginRight="8dp"
                     android:layout_marginTop="8dp"
                     app:layout_constraintTop_toBottomOf="@+id/textView12"
                     app:layout_constraintStart_toStartOf="@+id/textView12"
+                    android:layout_marginEnd="8dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:layout_marginRight="8dp"
                     />
 
             <Button
@@ -413,8 +312,21 @@
                     app:layout_constraintTop_toBottomOf="@+id/edt_comment"
                     app:layout_constraintStart_toStartOf="@+id/edt_comment"
                     app:layout_constraintEnd_toEndOf="@+id/edt_comment"
+                    />
+
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Remove watch"
+                    android:textAllCaps="true"
+                    android:id="@+id/txt_remove"
+                    android:fontFamily="@font/montserrat_semibold"
+                    android:textColor="@color/grey"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    android:layout_marginBottom="16dp"
+                    app:layout_constraintTop_toBottomOf="@+id/btn_save"
+                    app:layout_constraintEnd_toEndOf="@+id/btn_save"
+                    app:layout_constraintStart_toStartOf="@+id/btn_save"
+                    android:layout_marginTop="16dp"
                     />
 
         </android.support.constraint.ConstraintLayout>

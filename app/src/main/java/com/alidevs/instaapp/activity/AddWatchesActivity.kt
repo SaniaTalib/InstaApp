@@ -207,37 +207,37 @@ class AddWatchesActivity : AppCompatActivity() {
             if (resultCode == Activity.RESULT_OK) {
                 if (primary) {
                     primaryImageURI = result.uri
-                    img_primary.visibility = View.GONE
-                    val f = File(getRealPathFromURI(primaryImageURI))
+                    img_primary.setImageURI(primaryImageURI)
+                    /*val f = File(getRealPathFromURI(primaryImageURI))
                     val d = Drawable.createFromPath(f.absolutePath)
-                    constraintLayout3.background = d
+                    constraintLayout3.background = d*/
                     primary = false
                     mArrayUri.add(primaryImageURI)
                 }
                 if (first) {
                     firstImageURI = result.uri
-                    img_one.visibility = View.GONE
-                    val f = File(getRealPathFromURI(firstImageURI))
+                    img_one.setImageURI(firstImageURI)
+                    /*val f = File(getRealPathFromURI(firstImageURI))
                     val d = Drawable.createFromPath(f.absolutePath)
-                    first_img.background = d
+                    first_img.background = d*/
                     first = false
                     mArrayUri.add(firstImageURI)
                 }
                 if (second) {
                     secondImageURI = result.uri
-                    img_two.visibility = View.GONE
-                    val f = File(getRealPathFromURI(secondImageURI))
+                    img_two.setImageURI(secondImageURI)
+                   /* val f = File(getRealPathFromURI(secondImageURI))
                     val d = Drawable.createFromPath(f.absolutePath)
-                    second_img.background = d
+                    second_img.background = d*/
                     second = false
                     mArrayUri.add(secondImageURI)
                 }
                 if (third) {
                     thirdImageURI = result.uri
-                    img_three.visibility = View.GONE
-                    val f = File(getRealPathFromURI(thirdImageURI))
+                    img_three.setImageURI(thirdImageURI)
+                    /*val f = File(getRealPathFromURI(thirdImageURI))
                     val d = Drawable.createFromPath(f.absolutePath)
-                    third_img.background = d
+                    third_img.background = d*/
                     third = false
                     mArrayUri.add(thirdImageURI)
                 }
