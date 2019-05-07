@@ -1,4 +1,4 @@
-package com.alidevs.instaapp.activity
+package com.alidevs.instaapp.fragment
 
 import android.content.Intent
 import android.os.Bundle
@@ -9,11 +9,13 @@ import android.view.ViewGroup
 import android.widget.TextView
 import com.alidevs.instaapp.R
 import com.alidevs.instaapp.UpdateEmailActivity
+import com.alidevs.instaapp.activity.LoginActivity
+import com.alidevs.instaapp.activity.UpdatePasswordActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 
-class SettingsActivity : Fragment() {
+class SettingsFragment : Fragment() {
 
     private lateinit var updateEmail: TextView
     private lateinit var updatePassword: TextView

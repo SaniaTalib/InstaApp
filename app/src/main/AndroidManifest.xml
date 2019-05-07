@@ -26,14 +26,14 @@
         </activity>
         <activity android:name=".activity.SignupActivity">
         </activity>
-        <activity android:name=".activity.CreateNewLoginActivity">
+        <activity android:name=".activity.OnBoardActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".activity.SettingsActivity"/>
+        <activity android:name=".activity.CreateNewLoginActivity"/>
         <activity android:name=".activity.AddWatchesActivity"/>
         <activity android:name=".activity.ForgotPasswordActivity"/>
 

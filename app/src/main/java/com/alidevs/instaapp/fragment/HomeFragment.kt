@@ -57,8 +57,6 @@ class HomeFragment : Fragment(), GridViewAdapter.ItemClickListener {
     private lateinit var btnClose: ImageView
     private lateinit var submittedLayout: ConstraintLayout
     private lateinit var uploadImage: ImageView
-    private lateinit var galleryActive: ImageView
-    private lateinit var pagerActive: ImageView
     private lateinit var pagerInactive: ImageView
     private lateinit var contestInactive: ImageView
     private lateinit var contestActive: ImageView
@@ -85,9 +83,7 @@ class HomeFragment : Fragment(), GridViewAdapter.ItemClickListener {
         savedInstanceState: Bundle?
     ): View? {
         val root = inflater.inflate(R.layout.fragment_home, container, false)
-        galleryActive = root.findViewById(R.id.gallery_active)
         galleryInactive = root.findViewById(R.id.gallery_inactive)
-        pagerActive = root.findViewById(R.id.pager_active)
         pagerInactive = root.findViewById(R.id.pager_inactive)
         contestInactive = root.findViewById(R.id.award_inactive)
         contestActive = root.findViewById(R.id.award_active)
@@ -162,11 +158,9 @@ class HomeFragment : Fragment(), GridViewAdapter.ItemClickListener {
 
         galleryInactive.setOnClickListener {
             txtTitle.text = "Gallery"
-            galleryActive.visibility = View.VISIBLE
             pagerInactive.visibility = View.VISIBLE
             contestInactive.visibility = View.VISIBLE
             galleryInactive.visibility = View.GONE
-            pagerActive.visibility = View.GONE
             contestActive.visibility = View.GONE
             fullPage.visibility = View.GONE
             recyclerView.visibility = View.VISIBLE
@@ -175,11 +169,9 @@ class HomeFragment : Fragment(), GridViewAdapter.ItemClickListener {
 
         pagerInactive.setOnClickListener {
             txtTitle.text = "Gallery"
-            pagerActive.visibility = View.VISIBLE
             galleryInactive.visibility = View.VISIBLE
             contestInactive.visibility = View.VISIBLE
             pagerInactive.visibility = View.GONE
-            galleryActive.visibility = View.GONE
             contestActive.visibility = View.GONE
             fullPage.visibility = View.VISIBLE
             recyclerView.visibility = View.GONE
@@ -191,7 +183,6 @@ class HomeFragment : Fragment(), GridViewAdapter.ItemClickListener {
             contestInactive.visibility = View.GONE
             pagerInactive.visibility = View.VISIBLE
             galleryInactive.visibility = View.VISIBLE
-            galleryActive.visibility = View.GONE
             contestActive.visibility = View.VISIBLE
             leaderBoard.visibility = View.VISIBLE
 
@@ -470,9 +461,7 @@ class HomeFragment : Fragment(), GridViewAdapter.ItemClickListener {
         fullPage.visibility = View.VISIBLE
         recyclerView.visibility = View.GONE
         fullPage.smoothScrollToPosition(position)
-        galleryActive.visibility = View.GONE
         galleryInactive.visibility = View.VISIBLE
-        pagerActive.visibility = View.VISIBLE
         pagerInactive.visibility = View.GONE
     }
 

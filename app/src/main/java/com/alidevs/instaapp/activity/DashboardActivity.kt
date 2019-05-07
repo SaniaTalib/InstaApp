@@ -12,6 +12,7 @@ import android.view.View
 import com.alidevs.instaapp.R
 import com.alidevs.instaapp.adapter.ViewPagerAdapter
 import com.alidevs.instaapp.fragment.MyWatchesFragment
+import com.alidevs.instaapp.fragment.SettingsFragment
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
@@ -87,7 +88,7 @@ class DashboardActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
                 //constraintLayout.visibility = View.GONE
             }
             R.id.settings -> {
-                setupHomeFragment(SettingsActivity())
+                setupHomeFragment(SettingsFragment())
                 tablayout.visibility = View.GONE
             }
             R.id.logout -> {
