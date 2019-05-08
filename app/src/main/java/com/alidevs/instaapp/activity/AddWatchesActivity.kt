@@ -5,7 +5,6 @@ import android.app.DatePickerDialog
 import android.content.Intent
 import android.database.Cursor
 import android.graphics.Bitmap
-import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -16,13 +15,11 @@ import android.widget.Toast
 import com.alidevs.instaapp.R
 import com.alidevs.instaapp.utils.AppPreferences
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.theartofdev.edmodo.cropper.CropImage
 import kotlinx.android.synthetic.main.fragment_add_watches.*
-import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
@@ -103,93 +100,112 @@ class AddWatchesActivity : AppCompatActivity() {
 
             val filepath = FirebaseStorage.getInstance().reference.child("watches_images")
 
-            while (up < mArrayUri.size) {
-                val ref = storageReference.child("watches_post_images").child(mArrayUri[k].lastPathSegment)
-                val filepath = ref.putFile(mArrayUri[k])
-                filepath.addOnSuccessListener { task ->
-                    ref.downloadUrl.addOnSuccessListener { downloadPhotoUrl ->
-                        myURL = downloadPhotoUrl.toString()
-                        imgurl.add(myURL)
-                        if (edi_brand.text.toString() != "" && edt_model.text.toString() != "" && edt_ref.text.toString() != "" &&
-                            edt_serial.text.toString() != "" && edt_date.text.toString() != "" && edt_comment.text.toString() != ""
-                        ) {
-                            if (imgurl.size == mArrayUri.size) {
-                                val items = HashMap<String, Any>()
-                               when(imgurl.size){
-                                   1 -> {
-                                       items["image_url_primary"] = imgurl[0]
-                                       items["image_url_first"] = ""
-                                       items["image_url_second"] = ""
-                                       items["image_url_third"] = ""
-                                       items["brand_name"] = edi_brand.text.toString()
-                                       items["model"] = edt_model.text.toString()
-                                       items["reference"] = edt_ref.text.toString()
-                                       items["serial"] = edt_serial.text.toString()
-                                       items["purchase_date"] = edt_date.text.toString()
-                                       items["comments"] = edt_comment.text.toString()
-                                   }
-
-                                   2 -> {
-                                       items["image_url_primary"] = imgurl[0]
-                                       items["image_url_first"] = imgurl[1]
-                                       items["image_url_second"] = ""
-                                       items["image_url_third"] = ""
-                                       items["brand_name"] = edi_brand.text.toString()
-                                       items["model"] = edt_model.text.toString()
-                                       items["reference"] = edt_ref.text.toString()
-                                       items["serial"] = edt_serial.text.toString()
-                                       items["purchase_date"] = edt_date.text.toString()
-                                       items["comments"] = edt_comment.text.toString()
-                                   }
-
-                                   3 -> {
-                                       items["image_url_primary"] = imgurl[0]
-                                       items["image_url_first"] = imgurl[1]
-                                       items["image_url_second"] = imgurl[2]
-                                       items["image_url_third"] = ""
-                                       items["brand_name"] = edi_brand.text.toString()
-                                       items["model"] = edt_model.text.toString()
-                                       items["reference"] = edt_ref.text.toString()
-                                       items["serial"] = edt_serial.text.toString()
-                                       items["purchase_date"] = edt_date.text.toString()
-                                       items["comments"] = edt_comment.text.toString()
-                                   }
-                                   4 -> {
-                                       items["image_url_primary"] = imgurl[0]
-                                       items["image_url_first"] = imgurl[1]
-                                       items["image_url_second"] = imgurl[2]
-                                       items["image_url_third"] = imgurl[3]
-                                       items["brand_name"] = edi_brand.text.toString()
-                                       items["model"] = edt_model.text.toString()
-                                       items["reference"] = edt_ref.text.toString()
-                                       items["serial"] = edt_serial.text.toString()
-                                       items["purchase_date"] = edt_date.text.toString()
-                                       items["comments"] = edt_comment.text.toString()
-                                   }
-                               }
-
-                                firestore.collection("MyWatches/$user_id/submissions").document().set(items)
-                                    .addOnCompleteListener { task ->
-                                        if (task.isSuccessful) {
-                                            progressBar2.visibility = View.GONE
-                                            onBackPressed()
-                                            finish()
+            if(mArrayUri.size != 0){
+                while (up < mArrayUri.size) {
+                    val ref = storageReference.child("watches_post_images").child(mArrayUri[k].lastPathSegment)
+                    val filepath = ref.putFile(mArrayUri[k])
+                    filepath.addOnSuccessListener { task ->
+                        ref.downloadUrl.addOnSuccessListener { downloadPhotoUrl ->
+                            myURL = downloadPhotoUrl.toString()
+                            imgurl.add(myURL)
+                            if (edi_brand.text.toString() != "" && edt_model.text.toString() != "" && edt_ref.text.toString() != "" &&
+                                edt_serial.text.toString() != "" && edt_date.text.toString() != "" && edt_comment.text.toString() != ""
+                            ) {
+                                if (imgurl.size == mArrayUri.size) {
+                                    val items = HashMap<String, Any>()
+                                    when (imgurl.size) {
+                                        0 -> {
+                                            items["image_url_primary"] = ""
+                                            items["image_url_first"] = ""
+                                            items["image_url_second"] = ""
+                                            items["image_url_third"] = ""
+                                            items["brand_name"] = edi_brand.text.toString()
+                                            items["model"] = edt_model.text.toString()
+                                            items["reference"] = edt_ref.text.toString()
+                                            items["serial"] = edt_serial.text.toString()
+                                            items["purchase_date"] = edt_date.text.toString()
+                                            items["comments"] = edt_comment.text.toString()
                                         }
-                                    }.addOnFailureListener {
-                                        progressBar2.visibility = View.GONE
-                                        Toast.makeText(this, "FireStore Error: ${it.message}", Toast.LENGTH_SHORT)
-                                            .show()
+                                        1 -> {
+                                            items["image_url_primary"] = imgurl[0]
+                                            items["image_url_first"] = ""
+                                            items["image_url_second"] = ""
+                                            items["image_url_third"] = ""
+                                            items["brand_name"] = edi_brand.text.toString()
+                                            items["model"] = edt_model.text.toString()
+                                            items["reference"] = edt_ref.text.toString()
+                                            items["serial"] = edt_serial.text.toString()
+                                            items["purchase_date"] = edt_date.text.toString()
+                                            items["comments"] = edt_comment.text.toString()
+                                        }
+                                        2 -> {
+                                            items["image_url_primary"] = imgurl[0]
+                                            items["image_url_first"] = imgurl[1]
+                                            items["image_url_second"] = ""
+                                            items["image_url_third"] = ""
+                                            items["brand_name"] = edi_brand.text.toString()
+                                            items["model"] = edt_model.text.toString()
+                                            items["reference"] = edt_ref.text.toString()
+                                            items["serial"] = edt_serial.text.toString()
+                                            items["purchase_date"] = edt_date.text.toString()
+                                            items["comments"] = edt_comment.text.toString()
+                                        }
+                                        3 -> {
+                                            items["image_url_primary"] = imgurl[0]
+                                            items["image_url_first"] = imgurl[1]
+                                            items["image_url_second"] = imgurl[2]
+                                            items["image_url_third"] = ""
+                                            items["brand_name"] = edi_brand.text.toString()
+                                            items["model"] = edt_model.text.toString()
+                                            items["reference"] = edt_ref.text.toString()
+                                            items["serial"] = edt_serial.text.toString()
+                                            items["purchase_date"] = edt_date.text.toString()
+                                            items["comments"] = edt_comment.text.toString()
+                                        }
+                                        4 -> {
+                                            items["image_url_primary"] = imgurl[0]
+                                            items["image_url_first"] = imgurl[1]
+                                            items["image_url_second"] = imgurl[2]
+                                            items["image_url_third"] = imgurl[3]
+                                            items["brand_name"] = edi_brand.text.toString()
+                                            items["model"] = edt_model.text.toString()
+                                            items["reference"] = edt_ref.text.toString()
+                                            items["serial"] = edt_serial.text.toString()
+                                            items["purchase_date"] = edt_date.text.toString()
+                                            items["comments"] = edt_comment.text.toString()
+                                        }
                                     }
+
+                                    firestore.collection("MyWatches/$user_id/submissions").document().set(items)
+                                        .addOnCompleteListener { task ->
+                                            if (task.isSuccessful) {
+                                                progressBar2.visibility = View.GONE
+                                                onBackPressed()
+                                                finish()
+                                            }
+                                        }.addOnFailureListener {
+                                            progressBar2.visibility = View.GONE
+                                            Toast.makeText(this, "FireStore Error: ${it.message}", Toast.LENGTH_SHORT)
+                                                .show()
+                                        }
+                                } else {
+                                    progressBar2.visibility = View.GONE
+                                    Toast.makeText(this, "All Fields are mandatory to fill", Toast.LENGTH_SHORT).show()
+                                }
+                            } else {
+                                progressBar2.visibility = View.GONE
+                                Toast.makeText(this, "All Fields are mandatory to fill", Toast.LENGTH_SHORT).show()
                             }
-                        } else {
-                            progressBar2.visibility = View.GONE
-                            Toast.makeText(this, "All Fields are mandatory to fill", Toast.LENGTH_LONG).show()
                         }
                     }
+                    up++
+                    k++
                 }
-                up++
-                k++
+            }else{
+                progressBar2.visibility = View.GONE
+                Toast.makeText(this@AddWatchesActivity, "You must select atleast one picture", Toast.LENGTH_SHORT).show()
             }
+
         }
     }
 
@@ -226,9 +242,9 @@ class AddWatchesActivity : AppCompatActivity() {
                 if (second) {
                     secondImageURI = result.uri
                     img_two.setImageURI(secondImageURI)
-                   /* val f = File(getRealPathFromURI(secondImageURI))
-                    val d = Drawable.createFromPath(f.absolutePath)
-                    second_img.background = d*/
+                    /* val f = File(getRealPathFromURI(secondImageURI))
+                     val d = Drawable.createFromPath(f.absolutePath)
+                     second_img.background = d*/
                     second = false
                     mArrayUri.add(secondImageURI)
                 }
@@ -289,8 +305,6 @@ class AddWatchesActivity : AppCompatActivity() {
         val currentUser = firebaseAuth.currentUser?.uid
         if (currentUser == null) {
             sendToLogin()
-        }else{
-            firestore!!.collection("users").document(currentUser).update("lastactive", FieldValue.serverTimestamp())
         }
     }
 

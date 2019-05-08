@@ -76,7 +76,6 @@ class FullPageAdapter(var context: Context, var list: MutableList<PostsModel>) :
         holder.image.setOnClickListener {
             val pressTime = System.currentTimeMillis()
             if (pressTime - lastPressTime <= DOUBLE_PRESS_INTERVAL && !mHasDoubleClicked) {
-                //Toast.makeText(context, "Double Click Event", Toast.LENGTH_SHORT).show()
                 firebaseFirestore!!.collection("Posts/$blogPostId/Likes").document(currentUserId).get()
                     .addOnCompleteListener { task ->
                         if (!task.result!!.exists()) {
@@ -85,9 +84,9 @@ class FullPageAdapter(var context: Context, var list: MutableList<PostsModel>) :
                             firebaseFirestore!!.collection("Posts/$blogPostId/Likes").document(currentUserId)
                                 .set(likesMap)
 
-                        } else {
+                        }/* else {
                             firebaseFirestore!!.collection("Posts/$blogPostId/Likes").document(currentUserId).delete()
-                        }
+                        }*/
                     }
 
                 firebaseFirestore!!.collection("Posts/$blogPostId/Likes")

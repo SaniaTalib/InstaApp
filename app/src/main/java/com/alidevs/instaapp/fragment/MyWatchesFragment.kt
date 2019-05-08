@@ -95,8 +95,6 @@ class MyWatchesFragment : Fragment() {
         val currentUser = firebaseAuth.currentUser?.uid
         if (currentUser == null) {
             sendToLogin()
-        }else{
-            firestore!!.collection("users").document(currentUser).update("lastactive", FieldValue.serverTimestamp())
         }
     }
 

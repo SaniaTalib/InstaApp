@@ -59,16 +59,16 @@ class WatchesDetailActivity: AppCompatActivity() {
         if(bundle!=null)
         {
             id = bundle.getString("post_id")
-            ref = bundle.getString("reference")
-            serial = bundle.getString("serial")
-            pdate = bundle.getString("pdate")
-            model = bundle.getString("model")
-            primaryImg = bundle.getString("primary_img")
-            firstImg = bundle.getString("first_img")
-            secondImg = bundle.getString("second_img")
-            thirdImg = bundle.getString("third_img")
-            comment = bundle.getString("comments")
-            brand = bundle.getString("brand_name")
+            ref = bundle.getString("reference")!!
+            serial = bundle.getString("serial")!!
+            pdate = bundle.getString("pdate")!!
+            model = bundle.getString("model")!!
+            primaryImg = bundle.getString("primary_img")!!
+            firstImg = bundle.getString("first_img")!!
+            secondImg = bundle.getString("second_img")!!
+            thirdImg = bundle.getString("third_img")!!
+            comment = bundle.getString("comments")!!
+            brand = bundle.getString("brand_name")!!
         }
 
         //set values to views
@@ -78,21 +78,29 @@ class WatchesDetailActivity: AppCompatActivity() {
         txt_comment.text = comment
         title_brand.text = brand
 
-        Glide.with(this)
-            .load(primaryImg)
-            .into(img_primary)
+        if (primaryImg != ""){
+            Glide.with(this)
+                .load(primaryImg)
+                .into(img_primary)
+        }
 
-        Glide.with(this)
-            .load(firstImg)
-            .into(img_one)
+        if (firstImg != ""){
+            Glide.with(this)
+                .load(firstImg)
+                .into(img_one)
+        }
 
-        Glide.with(this)
-            .load(secondImg)
-            .into(img_two)
+        if (secondImg != ""){
+            Glide.with(this)
+                .load(secondImg)
+                .into(img_two)
+        }
 
-        Glide.with(this)
-            .load(thirdImg)
-            .into(img_three)
+        if (thirdImg != ""){
+            Glide.with(this)
+                .load(thirdImg)
+                .into(img_three)
+        }
 
         txt_edit.setOnClickListener {
             val intent = Intent(this@WatchesDetailActivity, EditwatchesActivity::class.java)
@@ -108,6 +116,7 @@ class WatchesDetailActivity: AppCompatActivity() {
             intent.putExtra("second_img", secondImg)
             intent.putExtra("third_img", thirdImg)
             startActivity(intent)
+            finish()
         }
 
     }
@@ -117,8 +126,6 @@ class WatchesDetailActivity: AppCompatActivity() {
         val currentUser = firebaseAuth.currentUser?.uid
         if (currentUser == null) {
             sendToLogin()
-        }else{
-            firestore!!.collection("users").document(currentUser).update("lastactive", FieldValue.serverTimestamp())
         }
     }
 

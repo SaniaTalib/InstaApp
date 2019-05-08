@@ -23,10 +23,6 @@ class NewsFragment : Fragment(), NewsAdapter.ItemClickListener {
     private val RSS_to_JSON_API="https://api.rss2json.com/v1/api.json?rss_url="
     private lateinit var recyclerView: RecyclerView
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?

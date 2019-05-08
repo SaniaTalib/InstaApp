@@ -251,7 +251,7 @@
             <EditText
                     android:layout_width="0dp"
                     android:layout_height="50dp"
-                    android:inputType="textPersonName"
+                    android:inputType="phone"
                     android:ems="10"
                     android:paddingLeft="5dp"
                     android:fontFamily="@font/montserrat_regular"
@@ -294,7 +294,7 @@
                     app:layout_constraintHorizontal_bias="1.0"
                     android:layout_width="0dp"
                     android:layout_height="50dp"
-                    android:inputType="textPersonName"
+                    android:inputType="phone"
                     android:ems="10"
                     android:paddingLeft="5dp"
                     android:fontFamily="@font/montserrat_regular"

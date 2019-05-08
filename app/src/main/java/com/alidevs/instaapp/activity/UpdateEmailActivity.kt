@@ -90,8 +90,6 @@ class UpdateEmailActivity : AppCompatActivity() {
         val currentUser = mAuth.currentUser?.uid
         if (currentUser == null) {
             sendToLogin1()
-        }else{
-            firestore!!.collection("users").document(currentUser).update("lastactive", FieldValue.serverTimestamp())
         }
     }
 

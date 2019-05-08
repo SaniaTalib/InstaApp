@@ -182,7 +182,7 @@ class HomeFragment : Fragment(), GridViewAdapter.ItemClickListener {
             txtTitle.text = "Top 10"
             contestInactive.visibility = View.GONE
             pagerInactive.visibility = View.VISIBLE
-            galleryInactive.visibility = View.VISIBLE
+            galleryInactive.visibility = View.GONE
             contestActive.visibility = View.VISIBLE
             leaderBoard.visibility = View.VISIBLE
 
