@@ -7,14 +7,12 @@ import com.alidevs.instaapp.R
 import com.alidevs.instaapp.model.WatchesModel
 import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.DocumentChange
-import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import kotlinx.android.synthetic.main.activity_watches_detail.*
 
-class WatchesDetailActivity: AppCompatActivity() {
+class WatchesDetailActivity : AppCompatActivity() {
 
 
     private lateinit var storageReference: StorageReference
@@ -54,11 +52,10 @@ class WatchesDetailActivity: AppCompatActivity() {
         firestore = FirebaseFirestore.getInstance()
         storageReference = FirebaseStorage.getInstance().reference
         posts_list = ArrayList()
-        val bundle=intent.extras
+        val bundle = intent.extras
 
-        if(bundle!=null)
-        {
-            id = bundle.getString("post_id")
+        if (bundle != null) {
+            id = bundle.getString("post_id")!!
             ref = bundle.getString("reference")!!
             serial = bundle.getString("serial")!!
             pdate = bundle.getString("pdate")!!
@@ -78,25 +75,25 @@ class WatchesDetailActivity: AppCompatActivity() {
         txt_comment.text = comment
         title_brand.text = brand
 
-        if (primaryImg != ""){
+        if (primaryImg != "") {
             Glide.with(this)
                 .load(primaryImg)
                 .into(img_primary)
         }
 
-        if (firstImg != ""){
+        if (firstImg != "") {
             Glide.with(this)
                 .load(firstImg)
                 .into(img_one)
         }
 
-        if (secondImg != ""){
+        if (secondImg != "") {
             Glide.with(this)
                 .load(secondImg)
                 .into(img_two)
         }
 
-        if (thirdImg != ""){
+        if (thirdImg != "") {
             Glide.with(this)
                 .load(thirdImg)
                 .into(img_three)
