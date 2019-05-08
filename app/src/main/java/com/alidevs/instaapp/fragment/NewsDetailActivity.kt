@@ -14,7 +14,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.fragment_add_watches.*
 
-class NewsDetailFragment : AppCompatActivity() {
+class NewsDetailActivity : AppCompatActivity() {
 
     private lateinit var webView: WebView
     private var url: String = ""
@@ -72,7 +72,7 @@ class NewsDetailFragment : AppCompatActivity() {
             }
 
             override fun onReceivedError(view: WebView, errorCode: Int, description: String, failingUrl: String) {
-                Toast.makeText(this@NewsDetailFragment, "Error:$description", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@NewsDetailActivity, "Error:$description", Toast.LENGTH_SHORT).show()
             }
         }
         webView.loadUrl(url)
@@ -87,7 +87,7 @@ class NewsDetailFragment : AppCompatActivity() {
     }
 
     private fun sendToLogin() {
-        val intent = Intent(this@NewsDetailFragment, LoginActivity::class.java)
+        val intent = Intent(this@NewsDetailActivity, LoginActivity::class.java)
         startActivity(intent)
         finish()
     }

@@ -110,9 +110,9 @@ class HomeFragment : Fragment(), GridViewAdapter.ItemClickListener {
         loadLeaderboardPosts()
         loadTheme()
 
-        /* if (theme_list.size != 0) {
-
-         }*/
+         if (theme_list.size == 0) {
+             txtTag.text = utils.getDate().toString()
+         }
         /*******************HOME FRAGMENT**********************/
         val linearSnapHelper = PagerSnapHelper()
         linearSnapHelper.attachToRecyclerView(fullPage)
@@ -402,17 +402,14 @@ class HomeFragment : Fragment(), GridViewAdapter.ItemClickListener {
                                 arrayList.add(pojo)
 
                                 val sdf = SimpleDateFormat("dd-MMM-yyyy hh:mm:ss", Locale.US)
-                                var date1 = sdf.parse(finalStartDate)
-                                var date2 = sdf.parse(finalEndDate)
-                                var currentDate = sdf.parse(arrayList[doc.newIndex].date_time)
+                                val date1 = sdf.parse(finalStartDate)
+                                val date2 = sdf.parse(finalEndDate)
+                                val currentDate = sdf.parse(arrayList[doc.newIndex].date_time)
                                 if (currentDate.after(date1) && currentDate.before(date2)) {
                                     leaderboard_list.add(pojo)
                                     leaderBoard.adapter?.notifyDataSetChanged()
                                 }
 
-                            }
-                            if (doc.type == DocumentChange.Type.MODIFIED) {
-                                leaderBoard.adapter?.notifyDataSetChanged()
                             }
                         }
                     }

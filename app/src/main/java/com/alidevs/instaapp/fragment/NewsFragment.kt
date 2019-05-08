@@ -10,6 +10,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import com.alidevs.instaapp.R
 import com.alidevs.instaapp.adapter.NewsAdapter
 import com.alidevs.instaapp.model.Item
@@ -37,40 +38,45 @@ class NewsFragment : Fragment(), NewsAdapter.ItemClickListener {
 
     private fun loadRSS()
     {
-        val loadRSSAsync=object: AsyncTask<String, String, String>(){
-            internal  var mDialog = ProgressDialog(context)
+        try{
+            val loadRSSAsync=object: AsyncTask<String, String, String>(){
+                internal  var mDialog = ProgressDialog(context)
 
-            override fun onPreExecute() {
-                mDialog.setMessage("Please wait...")
-                mDialog.setCancelable(false)
-                mDialog.show()
+                override fun onPreExecute() {
+                    mDialog.setMessage("Please wait...")
+                    mDialog.setCancelable(false)
+                    mDialog.show()
+                }
+
+                override fun doInBackground(vararg params: String): String {
+                    val result:String
+                    val http = HttpDataHandler()
+                    result=http.getHttpDataHandler(params[0])
+                    return result
+                }override fun onPostExecute(result: String?) {
+                    mDialog.dismiss()
+                    var rssObject: RSSObject = Gson().fromJson<RSSObject>(result,RSSObject::class.java!!)
+                    val adapter=NewsAdapter(rssObject,context!!,this@NewsFragment)
+                    recyclerView.adapter=adapter
+                    adapter.notifyDataSetChanged()
+                }
             }
 
-            override fun doInBackground(vararg params: String): String {
-                val result:String
-                val http = HttpDataHandler()
-                result=http.getHttpDataHandler(params[0])
-                return result
-            }override fun onPostExecute(result: String?) {
-                mDialog.dismiss()
-                var rssObject: RSSObject = Gson().fromJson<RSSObject>(result,RSSObject::class.java!!)
-                val adapter=NewsAdapter(rssObject,context!!,this@NewsFragment)
-                recyclerView.adapter=adapter
-                adapter.notifyDataSetChanged()
-            }
+            val url_get_data=StringBuilder(RSS_to_JSON_API)  //call async to get data
+            url_get_data.append(RSS_link)
+            loadRSSAsync.execute(url_get_data.toString())
+        }catch(e: Exception){
+            Toast.makeText(context, "Error->$e", Toast.LENGTH_SHORT).show()
         }
 
-        val url_get_data=StringBuilder(RSS_to_JSON_API)  //call async to get data
-        url_get_data.append(RSS_link)
-        loadRSSAsync.execute(url_get_data.toString())
 
     }
 
     override fun onItemClicked(item: Item, position: Int) {
-        val intent = Intent(context,NewsDetailFragment::class.java)
+        val intent = Intent(context,NewsDetailActivity::class.java)
         intent.putExtra("url", item.link)
         startActivity(intent)
-        /*addFragment(NewsDetailFragment(), true,"NewsDetailFragment", item.link)*/
+        /*addFragment(NewsDetailActivity(), true,"NewsDetailActivity", item.link)*/
     }
 
     private fun addFragment(fragment: Fragment, addToBackStack: Boolean, tag: String, item: String) {
