@@ -1,6 +1,7 @@
 package com.alidevs.instaapp.fragment
 
 import android.app.ProgressDialog
+import android.content.Intent
 import android.os.AsyncTask
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -50,9 +51,7 @@ class NewsFragment : Fragment(), NewsAdapter.ItemClickListener {
                 val http = HttpDataHandler()
                 result=http.getHttpDataHandler(params[0])
                 return result
-            }
-
-            override fun onPostExecute(result: String?) {
+            }override fun onPostExecute(result: String?) {
                 mDialog.dismiss()
                 var rssObject: RSSObject = Gson().fromJson<RSSObject>(result,RSSObject::class.java!!)
                 val adapter=NewsAdapter(rssObject,context!!,this@NewsFragment)
@@ -68,7 +67,10 @@ class NewsFragment : Fragment(), NewsAdapter.ItemClickListener {
     }
 
     override fun onItemClicked(item: Item, position: Int) {
-        addFragment(NewsDetailFragment(), true,"NewsDetailFragment", item.link)
+        val intent = Intent(context,NewsDetailFragment::class.java)
+        intent.putExtra("url", item.link)
+        startActivity(intent)
+        /*addFragment(NewsDetailFragment(), true,"NewsDetailFragment", item.link)*/
     }
 
     private fun addFragment(fragment: Fragment, addToBackStack: Boolean, tag: String, item: String) {

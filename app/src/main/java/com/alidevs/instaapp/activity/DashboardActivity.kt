@@ -11,6 +11,7 @@ import android.view.MenuItem
 import android.view.View
 import com.alidevs.instaapp.R
 import com.alidevs.instaapp.adapter.ViewPagerAdapter
+import com.alidevs.instaapp.fragment.HomeFragment
 import com.alidevs.instaapp.fragment.MyWatchesFragment
 import com.alidevs.instaapp.fragment.SettingsFragment
 import com.google.firebase.auth.FirebaseAuth
@@ -82,6 +83,10 @@ class DashboardActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         // Handle navigation view item clicks here.
         when (item.itemId) {
+            R.id.my_home -> {
+                setupHomeFragment(HomeFragment())
+                tablayout.visibility = View.VISIBLE
+            }
             R.id.my_watches -> {
                 setupHomeFragment(MyWatchesFragment())
                 tablayout.visibility = View.GONE

@@ -46,6 +46,7 @@
                 android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
                 android:theme="@style/Base.Theme.AppCompat"/>
         <activity android:name=".activity.WatchesDetailActivity"/>
+        <activity android:name=".fragment.NewsDetailFragment"/>
 
         <meta-data
                 android:name="preloaded_fonts"

@@ -3,20 +3,18 @@ package com.alidevs.instaapp.fragment
 import android.app.ProgressDialog
 import android.content.Intent
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.view.LayoutInflater
+import android.support.v7.app.AppCompatActivity
 import android.view.View
-import android.view.ViewGroup
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.Toast
 import com.alidevs.instaapp.R
 import com.alidevs.instaapp.activity.LoginActivity
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.android.synthetic.main.fragment_add_watches.*
 
-class NewsDetailFragment : Fragment() {
+class NewsDetailFragment : AppCompatActivity() {
 
     private lateinit var webView: WebView
     private var url: String = ""
@@ -24,22 +22,29 @@ class NewsDetailFragment : Fragment() {
     private lateinit var firestore: FirebaseFirestore
     private lateinit var user_id: String
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        val root = inflater.inflate(R.layout.activity_news_detail, container, false)
-        webView = root.findViewById(R.id.webView1)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_news_detail)
+
+
+        val actionBar = supportActionBar
+        toolbar.setNavigationIcon(R.drawable.ic_back_arrow)
+        actionBar?.elevation = 4.0F
+        actionBar?.setDisplayShowHomeEnabled(true)
+        toolbar.setNavigationOnClickListener {
+            onBackPressed()
+        }
+        webView = findViewById(R.id.webView1)
         firebaseAuth = FirebaseAuth.getInstance()
         user_id = firebaseAuth.currentUser!!.uid
         firestore = FirebaseFirestore.getInstance()
-        if (arguments != null) {
-            url = arguments?.getString("url")!!
+        val bundle = intent.extras
+        if (bundle != null) {
+            url = bundle.getString("url")!!
             startWebView(url)
         } else {
-            fragmentManager!!.popBackStack()
+            onBackPressed()
         }
-        return root
     }
 
     private fun startWebView(url: String) {
@@ -50,7 +55,7 @@ class NewsDetailFragment : Fragment() {
         webView.settings.useWideViewPort = true
         webView.settings.loadWithOverviewMode = true
 
-        val progressDialog = ProgressDialog(context)
+        val progressDialog = ProgressDialog(this)
         progressDialog.setMessage("Loading...")
         progressDialog.show()
 
@@ -61,13 +66,13 @@ class NewsDetailFragment : Fragment() {
             }
 
             override fun onPageFinished(view: WebView, url: String) {
-                if (progressDialog.isShowing()) {
+                if (progressDialog.isShowing) {
                     progressDialog.dismiss()
                 }
             }
 
             override fun onReceivedError(view: WebView, errorCode: Int, description: String, failingUrl: String) {
-                Toast.makeText(context, "Error:$description", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@NewsDetailFragment, "Error:$description", Toast.LENGTH_SHORT).show()
             }
         }
         webView.loadUrl(url)
@@ -82,8 +87,8 @@ class NewsDetailFragment : Fragment() {
     }
 
     private fun sendToLogin() {
-        val intent = Intent(activity!!, LoginActivity::class.java)
+        val intent = Intent(this@NewsDetailFragment, LoginActivity::class.java)
         startActivity(intent)
-        activity!!.finish()
+        finish()
     }
 }
