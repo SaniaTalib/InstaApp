@@ -26,8 +26,6 @@
                 android:layout_width="match_parent"
                 android:layout_margin="4dp"
                 android:scaleType="centerCrop"
-                android:src="@drawable/demo"
-
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -103,7 +101,6 @@
             <ImageView
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:src="@drawable/demo"
                     android:id="@+id/img1"
                     android:layout_weight="0.5"
                     android:padding="4dp"
@@ -113,7 +110,6 @@
             <ImageView
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:src="@drawable/demo"
                     android:layout_weight="0.5"
                     android:scaleType="fitXY"
                     android:padding="4dp"
@@ -137,7 +133,6 @@
             <ImageView
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:src="@drawable/demo"
                     android:id="@+id/img4"
                     android:layout_weight="0.333"
                     android:padding="4dp"
@@ -147,7 +142,6 @@
             <ImageView
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:src="@drawable/demo"
                     android:layout_weight="0.333"
                     android:scaleType="fitXY"
                     android:padding="4dp"
@@ -157,7 +151,6 @@
             <ImageView
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:src="@drawable/demo"
                     android:id="@+id/img6"
                     android:layout_weight="0.333"
                     android:padding="4dp"

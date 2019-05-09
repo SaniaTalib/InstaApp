@@ -6,16 +6,18 @@ import android.os.Bundle
 import android.preference.PreferenceManager
 import com.alidevs.instaapp.R
 import com.alidevs.instaapp.utils.AppPreferences
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.activity_create_new_login.*
 
 class CreateNewLoginActivity : AppCompatActivity() {
 
     private lateinit var utils: AppPreferences
+    private lateinit var mAuth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_new_login)
-
+        mAuth = FirebaseAuth.getInstance()
         var t = Thread(Runnable {
             var getPrefs = PreferenceManager
                 .getDefaultSharedPreferences(baseContext);
@@ -52,6 +54,19 @@ class CreateNewLoginActivity : AppCompatActivity() {
         create_acc_btn.setOnClickListener {
             val intent= Intent(this, SignupActivity::class.java)
             startActivity(intent)
+        }
+    }
+
+    private fun sendToLogin() {
+        val intent = Intent(this, DashboardActivity::class.java)
+        startActivity(intent)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        val currentuser = mAuth.currentUser
+        if (currentuser != null) {
+            sendToLogin()
         }
     }
 

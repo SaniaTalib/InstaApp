@@ -84,8 +84,12 @@ class DashboardActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         // Handle navigation view item clicks here.
         when (item.itemId) {
             R.id.my_home -> {
-                setupHomeFragment(HomeFragment())
-                tablayout.visibility = View.VISIBLE
+               /* setupHomeFragment(HomeFragment())
+                tablayout.visibility = View.VISIBLE*/
+
+                val intent = Intent(this@DashboardActivity,DashboardActivity::class.java)
+                startActivity(intent)
+                finish()
             }
             R.id.my_watches -> {
                 setupHomeFragment(MyWatchesFragment())
