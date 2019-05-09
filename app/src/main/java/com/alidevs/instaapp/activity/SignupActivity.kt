@@ -52,23 +52,19 @@ class SignupActivity : AppCompatActivity() {
                 )
             ) {
                 if (pass == c_pass) {
-
-                        signup_progress.visibility = View.VISIBLE
-                        mAuth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener { task ->
-                            if (task.isSuccessful) {
-                                user_id = mAuth.currentUser?.uid!!
-                                storeDataToFireStore()
-                            } else {
-                                Toast.makeText(this, "Error: ${task.exception!!.message}", Toast.LENGTH_LONG).show()
-                            }
+                    signup_progress.visibility = View.VISIBLE
+                    mAuth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            user_id = mAuth.currentUser?.uid!!
+                            storeDataToFireStore()
+                        } else {
+                            Toast.makeText(this, "Error: ${task.exception!!.message}", Toast.LENGTH_LONG).show()
                         }
-
-
+                    }
                 } else {
                     Toast.makeText(this, "Passwords are not matching", Toast.LENGTH_SHORT).show()
                 }
             } else {
-
                 Toast.makeText(this, "All fields are mandatory", Toast.LENGTH_SHORT).show()
             }
         }
@@ -77,7 +73,6 @@ class SignupActivity : AppCompatActivity() {
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
         }
-
     }
 
     private fun storeDataToFireStore() {
@@ -106,6 +101,7 @@ class SignupActivity : AppCompatActivity() {
         val intent = Intent(this, DashboardActivity::class.java)
         startActivity(intent)
     }
+
     override fun onStart() {
         super.onStart()
         val currentuser = mAuth.currentUser
