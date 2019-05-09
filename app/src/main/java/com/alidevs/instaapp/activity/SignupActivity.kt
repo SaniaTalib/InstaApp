@@ -52,7 +52,7 @@ class SignupActivity : AppCompatActivity() {
                 )
             ) {
                 if (pass == c_pass) {
-                    if (checkBox.isChecked) {
+
                         signup_progress.visibility = View.VISIBLE
                         mAuth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener { task ->
                             if (task.isSuccessful) {
@@ -62,9 +62,7 @@ class SignupActivity : AppCompatActivity() {
                                 Toast.makeText(this, "Error: ${task.exception!!.message}", Toast.LENGTH_LONG).show()
                             }
                         }
-                    } else {
-                        Toast.makeText(this, "Must be agreed to terms & conditions", Toast.LENGTH_SHORT).show()
-                    }
+
 
                 } else {
                     Toast.makeText(this, "Passwords are not matching", Toast.LENGTH_SHORT).show()
