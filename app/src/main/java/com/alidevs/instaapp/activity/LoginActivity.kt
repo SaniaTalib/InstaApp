@@ -41,8 +41,8 @@ class LoginActivity : AppCompatActivity(), AuthenticationListner {
         mAuth = FirebaseAuth.getInstance()
 
         btn_add_watches.setOnClickListener {
-            val stringEmail = user_name.text.toString()
-            val stringPass = login_password.text.toString()
+            val stringEmail = user_name.text.toString().trim()
+            val stringPass = login_password.text.toString().trim()
 
             if (!TextUtils.isEmpty(stringEmail) && !TextUtils.isEmpty(stringPass)) {
                 signup_progress.visibility = View.VISIBLE

@@ -21,7 +21,7 @@ import com.google.gson.Gson
 class NewsFragment : Fragment(), NewsAdapter.ItemClickListener {
 
 
-    private val RSS_link="http://www.hodinkee.com%2Farticles%2Frss.xml"
+    private val RSS_link="https://www.hodinkee.com/articles/rss.xml"
     private val RSS_to_JSON_API="https://api.rss2json.com/v1/api.json?rss_url="
     private lateinit var recyclerView: RecyclerView
 
@@ -53,12 +53,19 @@ class NewsFragment : Fragment(), NewsAdapter.ItemClickListener {
                     val http = HttpDataHandler()
                     result=http.getHttpDataHandler(params[0])
                     return result
-                }override fun onPostExecute(result: String?) {
+                }
+                override fun onPostExecute(result: String?) {
                     mDialog.dismiss()
-                    var rssObject: RSSObject = Gson().fromJson<RSSObject>(result,RSSObject::class.java!!)
-                    val adapter=NewsAdapter(rssObject,context!!,this@NewsFragment)
-                    recyclerView.adapter=adapter
-                    adapter.notifyDataSetChanged()
+                    try{
+                        var rssObject: RSSObject = Gson().fromJson<RSSObject>(result,RSSObject::class.java)
+                        val adapter=NewsAdapter(rssObject,context!!,this@NewsFragment)
+                        recyclerView.adapter=adapter
+                        adapter.notifyDataSetChanged()
+                    }catch(e: Exception){
+                        e.printStackTrace()
+                        Toast.makeText(context, "An issue occured while reading news feed", Toast.LENGTH_SHORT).show();
+                    }
+
                 }
             }
 

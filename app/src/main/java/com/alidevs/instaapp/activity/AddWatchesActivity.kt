@@ -75,7 +75,18 @@ class AddWatchesActivity : AppCompatActivity() {
         storageReference = FirebaseStorage.getInstance().reference
         utils = AppPreferences(this)
 
+        val dateDefault = utils.getDefaultDate()
+        val dateSplit = dateDefault!!.split("-")
 
+        var dateFinal = ""
+        dateFinal = when {
+            dateSplit[0] == "01" -> "${dateSplit[0]}ST ${dateSplit[1]} ${dateSplit[2]}"
+            dateSplit[0] == "02" -> "${dateSplit[0]}ND ${dateSplit[1]} ${dateSplit[2]}"
+            dateSplit[0] == "03" -> "${dateSplit[0]}RD ${dateSplit[1]} ${dateSplit[2]}"
+            dateSplit[0] == "31" -> "${dateSplit[0]}ST ${dateSplit[1]} ${dateSplit[2]}"
+            else -> "${dateSplit[0]}TH ${dateSplit[1]} ${dateSplit[2]}"
+        }
+        edt_date.text = dateFinal
 
         img_primary.setOnClickListener {
             primary = true
@@ -100,7 +111,7 @@ class AddWatchesActivity : AppCompatActivity() {
 
             val filepath = FirebaseStorage.getInstance().reference.child("watches_images")
 
-            if(mArrayUri.size != 0){
+            if (mArrayUri.size != 0) {
                 while (up < mArrayUri.size) {
                     val ref = storageReference.child("watches_post_images").child(mArrayUri[k].lastPathSegment)
                     val filepath = ref.putFile(mArrayUri[k])
@@ -201,9 +212,10 @@ class AddWatchesActivity : AppCompatActivity() {
                     up++
                     k++
                 }
-            }else{
+            } else {
                 progressBar2.visibility = View.GONE
-                Toast.makeText(this@AddWatchesActivity, "You must select atleast one picture", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@AddWatchesActivity, "You must select atleast one picture", Toast.LENGTH_SHORT)
+                    .show()
             }
 
         }
@@ -268,7 +280,7 @@ class AddWatchesActivity : AppCompatActivity() {
 
     private fun getRealPathFromURI(contentURI: Uri): String? {
         val cursor: Cursor? = contentResolver.query(contentURI, null, null, null, null)
-        return if (cursor == null) { // Source is Dropbox or other similar local file path
+        return if (cursor == null) {
             contentURI.path
         } else {
             cursor.moveToFirst()
@@ -297,7 +309,17 @@ class AddWatchesActivity : AppCompatActivity() {
     private fun updateDateInView() {
         val myFormat = "dd MMM yyyy"
         val sdf = SimpleDateFormat(myFormat, Locale.US)
-        edt_date!!.text = sdf.format(cal.time)
+        val defaultDate = sdf.format(cal.time)
+        val dateSplit = defaultDate!!.split(" ")
+        var dateFinal = ""
+        dateFinal = when {
+            dateSplit[0] == "01" -> "${dateSplit[0]}ST ${dateSplit[1]} ${dateSplit[2]}"
+            dateSplit[0] == "02" -> "${dateSplit[0]}ND ${dateSplit[1]} ${dateSplit[2]}"
+            dateSplit[0] == "03" -> "${dateSplit[0]}RD ${dateSplit[1]} ${dateSplit[2]}"
+            dateSplit[0] == "31" -> "${dateSplit[0]}ST ${dateSplit[1]} ${dateSplit[2]}"
+            else -> "${dateSplit[0]}TH ${dateSplit[1]} ${dateSplit[2]}"
+        }
+        edt_date.text = dateFinal
     }
 
     override fun onStart() {

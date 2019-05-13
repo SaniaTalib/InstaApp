@@ -3,7 +3,6 @@ package com.alidevs.instaapp.utils
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Build
-import java.text.DateFormat.getDateTimeInstance
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -23,7 +22,6 @@ class AppPreferences(context: Context) {
     }
 
 
-
     fun putString(key: String, value: String) {
         var editor = preferences.edit()
         editor.putString(key, value)
@@ -33,6 +31,7 @@ class AppPreferences(context: Context) {
     fun getString(key: String): String? {
         return preferences.getString(key, null)
     }
+
     fun getCurrentDate(): String? {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val current = LocalDateTime.now()
@@ -56,6 +55,20 @@ class AppPreferences(context: Context) {
         } else {
             val date = Date()
             val formatter = SimpleDateFormat("dd-MMM-yyyy")
+            val answer: String = formatter.format(date)
+            answer
+        }
+    }
+
+    fun getDefaultDate(): String? {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val current = LocalDateTime.now()
+            val formatter = DateTimeFormatter.ofPattern("dd-MMMM-yyyy")
+            val answer = current.format(formatter)
+            answer
+        } else {
+            val date = Date()
+            val formatter = SimpleDateFormat("dd-MMMM-yyyy")
             val answer: String = formatter.format(date)
             answer
         }

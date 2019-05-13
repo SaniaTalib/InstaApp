@@ -23,10 +23,6 @@ class SignupActivity : AppCompatActivity() {
         setContentView(R.layout.activity_signup)
 
         setSupportActionBar(toolbar)
-
-        /*mAuth = FirebaseAuth.getInstance()
-        user_id = mAuth.currentUser!!.uid
-        firestore = FirebaseFirestore.getInstance()*/
         val actionBar = supportActionBar
         toolbar.setNavigationIcon(R.drawable.ic_back_arrow)
         toolbar.setNavigationOnClickListener {
@@ -43,10 +39,10 @@ class SignupActivity : AppCompatActivity() {
 
 
         signup_button.setOnClickListener {
-            val email = signup_email.text.toString()
-            val pass = signup_password.text.toString()
-            val c_pass = signup_cnfirm_password.text.toString()
-            val name = signup_user_name.text.toString()
+            val email = signup_email.text.toString().trim()
+            val pass = signup_password.text.toString().trim()
+            val c_pass = signup_cnfirm_password.text.toString().trim()
+            val name = signup_user_name.text.toString().trim()
             if (!TextUtils.isEmpty(email) && !TextUtils.isEmpty(pass) && !TextUtils.isEmpty(c_pass) && !TextUtils.isEmpty(
                     name
                 )
@@ -58,13 +54,16 @@ class SignupActivity : AppCompatActivity() {
                             user_id = mAuth.currentUser?.uid!!
                             storeDataToFireStore()
                         } else {
+                            signup_progress.visibility = View.GONE
                             Toast.makeText(this, "Error: ${task.exception!!.message}", Toast.LENGTH_LONG).show()
                         }
                     }
                 } else {
+                    signup_progress.visibility = View.GONE
                     Toast.makeText(this, "Passwords are not matching", Toast.LENGTH_SHORT).show()
                 }
             } else {
+                signup_progress.visibility = View.GONE
                 Toast.makeText(this, "All fields are mandatory", Toast.LENGTH_SHORT).show()
             }
         }
@@ -77,8 +76,8 @@ class SignupActivity : AppCompatActivity() {
 
     private fun storeDataToFireStore() {
         val items = HashMap<String, Any>()
-        items["name"] = signup_user_name.text.toString()
-        items["email"] = signup_email.text.toString()
+        items["name"] = signup_user_name.text.toString().trim()
+        items["email"] = signup_email.text.toString().trim()
         items["lastactive"] = FieldValue.serverTimestamp()
 
         firestore.collection("users").document(user_id).set(items)
