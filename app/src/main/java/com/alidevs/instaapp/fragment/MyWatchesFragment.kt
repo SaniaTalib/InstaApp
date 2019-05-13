@@ -11,11 +11,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.Toast
 import com.alidevs.instaapp.R
 import com.alidevs.instaapp.activity.AddWatchesActivity
 import com.alidevs.instaapp.activity.LoginActivity
 import com.alidevs.instaapp.adapter.MyWatchesAdapter
 import com.alidevs.instaapp.model.WatchesModel
+import com.alidevs.instaapp.utils.Utils
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.FieldValue
@@ -29,6 +31,8 @@ class MyWatchesFragment : Fragment() {
     private lateinit var constraintLayout: ConstraintLayout
     private lateinit var btnAddWatches: Button
     private var recyclerView: RecyclerView? = null
+    val networkAvailability : Boolean
+        get() = Utils.isNetworkAvailable(context!!)
 
     private lateinit var storageReference: StorageReference
     private lateinit var firestore: FirebaseFirestore
@@ -44,13 +48,18 @@ class MyWatchesFragment : Fragment() {
         val root = inflater.inflate(R.layout.fragment_my_watches, container, false)
         recyclerView = root.findViewById(R.id.recyclerview)
         btnAddWatches = root.findViewById(R.id.btn_add_watches)
-        //Init components
-        firebaseAuth = FirebaseAuth.getInstance()
-        user_id = firebaseAuth.currentUser!!.uid
-        firestore = FirebaseFirestore.getInstance()
-        storageReference = FirebaseStorage.getInstance().reference
         posts_list = ArrayList()
-        loadPosts()
+        //Init components
+        if (networkAvailability){
+            firebaseAuth = FirebaseAuth.getInstance()
+            user_id = firebaseAuth.currentUser!!.uid
+            firestore = FirebaseFirestore.getInstance()
+            storageReference = FirebaseStorage.getInstance().reference
+            loadPosts()
+        }else{
+            Toast.makeText(context, "Please check your internet connection.", Toast.LENGTH_SHORT).show();
+        }
+
 
         recyclerView!!.layoutManager = LinearLayoutManager(context)
         recyclerView!!.adapter = context?.let { MyWatchesAdapter(context!!, posts_list) }
@@ -92,9 +101,13 @@ class MyWatchesFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
-        val currentUser = firebaseAuth.currentUser?.uid
-        if (currentUser == null) {
-            sendToLogin()
+        if (networkAvailability){
+            val currentUser = firebaseAuth.currentUser?.uid
+            if (currentUser == null) {
+                sendToLogin()
+            }
+        }else{
+            Toast.makeText(context, "Please check your internet connection.", Toast.LENGTH_SHORT).show();
         }
     }
 

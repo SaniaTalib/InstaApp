@@ -31,6 +31,7 @@ import com.alidevs.instaapp.adapter.LeaderBoardAdapter
 import com.alidevs.instaapp.model.PostsModel
 import com.alidevs.instaapp.model.ThemeModel
 import com.alidevs.instaapp.utils.AppPreferences
+import com.alidevs.instaapp.utils.Utils
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.FieldValue
@@ -52,6 +53,8 @@ class HomeFragment : Fragment(), GridViewAdapter.ItemClickListener {
 
     val TAG = HomeFragment::getTag.toString()
     private lateinit var utils: AppPreferences
+    val networkAvailability: Boolean
+        get() = Utils.isNetworkAvailable(context!!)
 
     private lateinit var galleryInactive: ImageView
     private lateinit var btnClose: ImageView
@@ -98,21 +101,28 @@ class HomeFragment : Fragment(), GridViewAdapter.ItemClickListener {
         txtTag = root.findViewById(R.id.textView7)
         posts_list = ArrayList()
         leaderboard_list = ArrayList()
-        firebaseAuth = FirebaseAuth.getInstance()
-        user_id = firebaseAuth.currentUser!!.uid
-        firestore = FirebaseFirestore.getInstance()
-        storageReference = FirebaseStorage.getInstance().reference
+        if (networkAvailability) {
+            firebaseAuth = FirebaseAuth.getInstance()
+            user_id = firebaseAuth.currentUser!!.uid
+            firestore = FirebaseFirestore.getInstance()
+            storageReference = FirebaseStorage.getInstance().reference
+        }
         utils = AppPreferences(context!!)
         arrayList = ArrayList()
         theme_list = ArrayList()
 
-        loadPosts()
-        loadLeaderboardPosts()
-        loadTheme()
+        if (networkAvailability){
+            loadPosts()
+            loadLeaderboardPosts()
+            loadTheme()
+        }else{
+            Toast.makeText(context, "Please check your internet connection.", Toast.LENGTH_SHORT).show();
+        }
 
-         if (theme_list.size == 0) {
-             txtTag.text = utils.getDate().toString()
-         }
+
+        if (theme_list.size == 0) {
+            txtTag.text = utils.getDate().toString()
+        }
         /*******************HOME FRAGMENT**********************/
         val linearSnapHelper = PagerSnapHelper()
         linearSnapHelper.attachToRecyclerView(fullPage)
@@ -205,9 +215,12 @@ class HomeFragment : Fragment(), GridViewAdapter.ItemClickListener {
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
             val result = CropImage.getActivityResult(data)
             if (resultCode == Activity.RESULT_OK) {
-                user_id = firebaseAuth.currentUser!!.uid
                 mainUril = result.uri
-                compressImage()
+                if (networkAvailability){
+                    compressImage()
+                }else{
+                    Toast.makeText(context, "Please check your internet connection.", Toast.LENGTH_SHORT).show();
+                }
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 val error = result.error
                 Log.d(TAG, "$error")
@@ -332,11 +345,15 @@ class HomeFragment : Fragment(), GridViewAdapter.ItemClickListener {
 
     override fun onStart() {
         super.onStart()
-        val currentUser = firebaseAuth.currentUser?.uid
-        if (currentUser == null) {
-            sendToLogin()
+        if (networkAvailability) {
+            val currentUser = firebaseAuth.currentUser?.uid
+            if (currentUser == null) {
+                sendToLogin()
+            } else {
+                firestore.collection("users").document(currentUser).update("lastactive", FieldValue.serverTimestamp())
+            }
         } else {
-            firestore.collection("users").document(currentUser).update("lastactive", FieldValue.serverTimestamp())
+            Toast.makeText(context, "Please check your internet connection.", Toast.LENGTH_SHORT).show();
         }
     }
 

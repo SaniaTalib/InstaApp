@@ -13,6 +13,7 @@ import android.widget.ImageView
 import android.widget.Toast
 import com.alidevs.instaapp.R
 import com.alidevs.instaapp.model.PostsModel
+import com.alidevs.instaapp.utils.Utils
 import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
@@ -24,6 +25,8 @@ class FullPageAdapter(var context: Context, var list: MutableList<PostsModel>) :
 
     private val DOUBLE_PRESS_INTERVAL: Long = 250 // in millis
     private var lastPressTime: Long = 0
+    val networkAvailability: Boolean
+        get() = Utils.isNetworkAvailable(context)
 
 
     private var mHasDoubleClicked = false
@@ -36,8 +39,10 @@ class FullPageAdapter(var context: Context, var list: MutableList<PostsModel>) :
         var imgHeart: ImageView = itemView.findViewById(R.id.heart)
 
         init {
-            firebaseFirestore = FirebaseFirestore.getInstance()
-            firebaseAuth = FirebaseAuth.getInstance()
+            if (networkAvailability) {
+                firebaseFirestore = FirebaseFirestore.getInstance()
+                firebaseAuth = FirebaseAuth.getInstance()
+            }
         }
     }
 
@@ -58,51 +63,60 @@ class FullPageAdapter(var context: Context, var list: MutableList<PostsModel>) :
             .into(holder.image)
 
         //Get Likes
-        firebaseFirestore!!.collection("Posts/$blogPostId/Likes").document(currentUserId)
-            .addSnapshotListener { documentSnapshot, e ->
-                if (documentSnapshot != null) {
-                    if (documentSnapshot.exists()) {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                            holder.imgHeart.setImageDrawable(context.getDrawable(R.drawable.heart_active))
-                        }
-                    } else {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                            holder.imgHeart.setImageDrawable(context.getDrawable(R.drawable.heart))
+        if (networkAvailability) {
+            firebaseFirestore!!.collection("Posts/$blogPostId/Likes").document(currentUserId)
+                .addSnapshotListener { documentSnapshot, e ->
+                    if (documentSnapshot != null) {
+                        if (documentSnapshot.exists()) {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                                holder.imgHeart.setImageDrawable(context.getDrawable(R.drawable.heart_active))
+                            }
+                        } else {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                                holder.imgHeart.setImageDrawable(context.getDrawable(R.drawable.heart))
+                            }
                         }
                     }
                 }
-            }
+        } else {
+            Toast.makeText(context, "Please check your internet connection.", Toast.LENGTH_SHORT).show();
+        }
 
         holder.image.setOnClickListener {
             val pressTime = System.currentTimeMillis()
             if (pressTime - lastPressTime <= DOUBLE_PRESS_INTERVAL && !mHasDoubleClicked) {
-                firebaseFirestore!!.collection("Posts/$blogPostId/Likes").document(currentUserId).get()
-                    .addOnCompleteListener { task ->
-                        if (!task.result!!.exists()) {
-                            val likesMap = HashMap<String, Any>()
-                            likesMap["timestamp"] = FieldValue.serverTimestamp()
-                            firebaseFirestore!!.collection("Posts/$blogPostId/Likes").document(currentUserId)
-                                .set(likesMap)
+                if (networkAvailability) {
+                    firebaseFirestore!!.collection("Posts/$blogPostId/Likes").document(currentUserId).get()
+                        .addOnCompleteListener { task ->
+                            if (!task.result!!.exists()) {
+                                val likesMap = HashMap<String, Any>()
+                                likesMap["timestamp"] = FieldValue.serverTimestamp()
+                                firebaseFirestore!!.collection("Posts/$blogPostId/Likes").document(currentUserId)
+                                    .set(likesMap)
 
-                        }/* else {
+                            }/* else {
                             firebaseFirestore!!.collection("Posts/$blogPostId/Likes").document(currentUserId).delete()
                         }*/
-                    }
+                        }
 
-                firebaseFirestore!!.collection("Posts/$blogPostId/Likes")
-                    .addSnapshotListener { queryDocumentSnapshots, e ->
-                        if (queryDocumentSnapshots != null) {
-                            if (!queryDocumentSnapshots.isEmpty) {
-                                val count = queryDocumentSnapshots.size()
-                                Log.d("#Count", "$count Likes")
-                                firebaseFirestore!!.collection("Posts").document(blogPostId)
-                                    .update("likes_count", count)
-                            } else {
-                                firebaseFirestore!!.collection("Posts").document(blogPostId).update("likes_count", 0)
-                                Log.d("#Count", "$0 Likes")
+                    firebaseFirestore!!.collection("Posts/$blogPostId/Likes")
+                        .addSnapshotListener { queryDocumentSnapshots, e ->
+                            if (queryDocumentSnapshots != null) {
+                                if (!queryDocumentSnapshots.isEmpty) {
+                                    val count = queryDocumentSnapshots.size()
+                                    Log.d("#Count", "$count Likes")
+                                    firebaseFirestore!!.collection("Posts").document(blogPostId)
+                                        .update("likes_count", count)
+                                } else {
+                                    firebaseFirestore!!.collection("Posts").document(blogPostId)
+                                        .update("likes_count", 0)
+                                    Log.d("#Count", "$0 Likes")
+                                }
                             }
                         }
-                    }
+                } else {
+                    Toast.makeText(context, "Please check your internet connection.", Toast.LENGTH_SHORT).show();
+                }
                 mHasDoubleClicked = true
             } else {
                 mHasDoubleClicked = false

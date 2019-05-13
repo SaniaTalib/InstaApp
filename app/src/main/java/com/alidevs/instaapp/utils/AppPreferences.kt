@@ -2,6 +2,7 @@ package com.alidevs.instaapp.utils
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.net.ConnectivityManager
 import android.os.Build
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
@@ -87,18 +88,7 @@ class AppPreferences(context: Context) {
             answer
         }
     }
-    /* fun savedata(key: String, `val`: String) {
-        editor.putString(key, `val`).commit()
-    }*/
 
-    /* fun getdata(key: String): String {
-         val value = preferences.getString(key, "")
-         if (value!!.isEmpty()) {
-             Log.i(TAG, "$key not found.")
-             return ""
-         }
-         return value
-     }*/
 
 
     companion object {

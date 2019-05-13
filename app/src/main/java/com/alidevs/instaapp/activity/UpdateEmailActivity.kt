@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.widget.Toast
 import com.alidevs.instaapp.activity.LoginActivity
+import com.alidevs.instaapp.utils.Utils
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -19,6 +20,8 @@ class UpdateEmailActivity : AppCompatActivity() {
     private lateinit var mAuth: FirebaseAuth
     private lateinit var firestore: FirebaseFirestore
     private lateinit var user_id: String
+    val networkAvailability : Boolean
+        get() = Utils.isNetworkAvailable(applicationContext)
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -27,9 +30,11 @@ class UpdateEmailActivity : AppCompatActivity() {
 
         setSupportActionBar(update_email_toolbar)
 
-        mAuth = FirebaseAuth.getInstance()
-        user_id = mAuth.currentUser!!.uid
-        firestore = FirebaseFirestore.getInstance()
+        if (networkAvailability){
+            mAuth = FirebaseAuth.getInstance()
+            user_id = mAuth.currentUser!!.uid
+            firestore = FirebaseFirestore.getInstance()
+        }
 
         val actionBar = supportActionBar
         update_email_toolbar.setNavigationIcon(R.drawable.ic_back_arrow)
@@ -41,10 +46,12 @@ class UpdateEmailActivity : AppCompatActivity() {
         actionBar.setDisplayShowHomeEnabled(true)
         actionBar.setDisplayUseLogoEnabled(true)
 
-
-        mAuth = FirebaseAuth.getInstance()
         update_email_btn.setOnClickListener {
-            updateEmailAddress()
+            if (networkAvailability){
+                updateEmailAddress()
+            }else{
+                Toast.makeText(this@UpdateEmailActivity, "Please check your internet connection.", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
@@ -87,9 +94,13 @@ class UpdateEmailActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        val currentUser = mAuth.currentUser?.uid
-        if (currentUser == null) {
-            sendToLogin1()
+        if (networkAvailability){
+            val currentUser = mAuth.currentUser?.uid
+            if (currentUser == null) {
+                sendToLogin1()
+            }
+        }else{
+            Toast.makeText(this@UpdateEmailActivity, "Please check your internet connection.", Toast.LENGTH_SHORT).show();
         }
     }
 

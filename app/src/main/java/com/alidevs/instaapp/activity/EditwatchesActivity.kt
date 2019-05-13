@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.View
 import android.widget.Toast
 import com.alidevs.instaapp.R
+import com.alidevs.instaapp.utils.Utils
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.activity_editwatches.*
@@ -36,6 +37,8 @@ class EditwatchesActivity : AppCompatActivity() {
     private var model: String = ""
     private var id: String = ""
     var cal = Calendar.getInstance()
+    val networkAvailability : Boolean
+        get() = Utils.isNetworkAvailable(applicationContext)
 
     ///
     var txtBrand = ""
@@ -61,9 +64,12 @@ class EditwatchesActivity : AppCompatActivity() {
             onBackPressed()
         }
 
-        firebaseAuth = FirebaseAuth.getInstance()
-        user_id = firebaseAuth.currentUser!!.uid
-        firestore = FirebaseFirestore.getInstance()
+        if (networkAvailability){
+            firebaseAuth = FirebaseAuth.getInstance()
+            user_id = firebaseAuth.currentUser!!.uid
+            firestore = FirebaseFirestore.getInstance()
+        }
+
 
         val bundle = intent.extras
         if (bundle != null) {
@@ -89,56 +95,63 @@ class EditwatchesActivity : AppCompatActivity() {
 
 
         btn_save.setOnClickListener {
-            setup_progress.visibility = View.VISIBLE
-            txtBrand = edi_brand.text.toString()
-            txtmodel = edt_model.text.toString()
-            txtref = edt_ref.text.toString()
-            txtserial = edt_serial.text.toString()
-            txtdate = edt_date.text.toString()
-            txtcomment = edt_comment.text.toString()
+            if (networkAvailability){
+                setup_progress.visibility = View.VISIBLE
+                txtBrand = edi_brand.text.toString()
+                txtmodel = edt_model.text.toString()
+                txtref = edt_ref.text.toString()
+                txtserial = edt_serial.text.toString()
+                txtdate = edt_date.text.toString()
+                txtcomment = edt_comment.text.toString()
 
 
-            val docRef = firestore.collection("MyWatches/$user_id/submissions").document(id)
+                val docRef = firestore.collection("MyWatches/$user_id/submissions").document(id)
 
-            docRef
-                .update(
-                    mapOf(
-                        "brand_name" to txtBrand,
-                        "model" to txtmodel,
-                        "reference" to txtref,
-                        "serial" to txtserial,
-                        "purchase_date" to txtdate,
-                        "comments" to txtcomment
+                docRef
+                    .update(
+                        mapOf(
+                            "brand_name" to txtBrand,
+                            "model" to txtmodel,
+                            "reference" to txtref,
+                            "serial" to txtserial,
+                            "purchase_date" to txtdate,
+                            "comments" to txtcomment
+                        )
                     )
-                )
-                .addOnSuccessListener {
-                    setup_progress.visibility = View.GONE
-                    Toast.makeText(this@EditwatchesActivity,"Record Updated Successfully", Toast.LENGTH_SHORT).show()
-                    Log.d("EditwatchesActivity", "DocumentSnapshot successfully updated!")
-                    val intent = Intent(this, DashboardActivity::class.java)
-                    startActivity(intent)
-                    finish()
-                }
-                .addOnFailureListener { e ->
-                    Toast.makeText(this@EditwatchesActivity,"Error updating document: $e", Toast.LENGTH_SHORT).show()
-                    setup_progress.visibility = View.GONE
-                    Log.w("EditwatchesActivity", "Error updating document", e)
-                }
+                    .addOnSuccessListener {
+                        setup_progress.visibility = View.GONE
+                        Toast.makeText(this@EditwatchesActivity,"Record Updated Successfully", Toast.LENGTH_SHORT).show()
+                        Log.d("EditwatchesActivity", "DocumentSnapshot successfully updated!")
+                        val intent = Intent(this, DashboardActivity::class.java)
+                        startActivity(intent)
+                        finish()
+                    }
+                    .addOnFailureListener { e ->
+                        Toast.makeText(this@EditwatchesActivity,"Error updating document: $e", Toast.LENGTH_SHORT).show()
+                        setup_progress.visibility = View.GONE
+                        Log.w("EditwatchesActivity", "Error updating document", e)
+                    }
+            }else{
+                Toast.makeText(this@EditwatchesActivity, "Please check your internet connection.", Toast.LENGTH_SHORT).show();
+            }
         }
 
         txt_remove.setOnClickListener {
-            setup_progress.visibility = View.VISIBLE
-            firestore.collection("MyWatches/$user_id/submissions").document(id).delete().addOnSuccessListener {
-                setup_progress.visibility = View.GONE
-                val intent = Intent(this, DashboardActivity::class.java)
-                startActivity(intent)
-                finish()
-            }.addOnFailureListener {e->
-                setup_progress.visibility = View.GONE
-                Toast.makeText(this@EditwatchesActivity,"Error updating document: $e", Toast.LENGTH_SHORT).show()
-                Log.w("EditwatchesActivity", "Error updating document", e)
+            if (networkAvailability){
+                setup_progress.visibility = View.VISIBLE
+                firestore.collection("MyWatches/$user_id/submissions").document(id).delete().addOnSuccessListener {
+                    setup_progress.visibility = View.GONE
+                    val intent = Intent(this, DashboardActivity::class.java)
+                    startActivity(intent)
+                    finish()
+                }.addOnFailureListener {e->
+                    setup_progress.visibility = View.GONE
+                    Toast.makeText(this@EditwatchesActivity,"Error updating document: $e", Toast.LENGTH_SHORT).show()
+                    Log.w("EditwatchesActivity", "Error updating document", e)
+                }
+            }else{
+                Toast.makeText(this@EditwatchesActivity, "Please check your internet connection.", Toast.LENGTH_SHORT).show();
             }
-
         }
     }
 

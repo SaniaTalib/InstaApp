@@ -12,6 +12,7 @@ import com.alidevs.instaapp.R
 import com.alidevs.instaapp.ViewModel.AuthenticationListner
 import com.alidevs.instaapp.ViewModel.GetData
 import com.alidevs.instaapp.ViewModel.InstagramDialog
+import com.alidevs.instaapp.utils.Utils
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.activity_login.*
 
@@ -19,6 +20,8 @@ class LoginActivity : AppCompatActivity(), AuthenticationListner {
 
     private lateinit var mAuth: FirebaseAuth
     private var instagramdialog: InstagramDialog? = null
+    val networkAvailability: Boolean
+        get() = Utils.isNetworkAvailable(applicationContext)
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,27 +41,33 @@ class LoginActivity : AppCompatActivity(), AuthenticationListner {
         actionBar.setDisplayShowHomeEnabled(true)
         actionBar.setDisplayUseLogoEnabled(true)
 
-        mAuth = FirebaseAuth.getInstance()
+        if (networkAvailability) {
+            mAuth = FirebaseAuth.getInstance()
+        }
 
         btn_add_watches.setOnClickListener {
-            val stringEmail = user_name.text.toString().trim()
-            val stringPass = login_password.text.toString().trim()
+            if (networkAvailability) {
+                val stringEmail = user_name.text.toString().trim()
+                val stringPass = login_password.text.toString().trim()
 
-            if (!TextUtils.isEmpty(stringEmail) && !TextUtils.isEmpty(stringPass)) {
-                signup_progress.visibility = View.VISIBLE
-                mAuth.signInWithEmailAndPassword(stringEmail, stringPass).addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        signup_progress.visibility = View.GONE
-                        val intent = Intent(this@LoginActivity, DashboardActivity::class.java)
-                        startActivity(intent)
-                    } else {
-                        signup_progress.visibility = View.GONE
-                        Toast.makeText(this, "Error: ${task.exception!!.message}", Toast.LENGTH_LONG).show()
+                if (!TextUtils.isEmpty(stringEmail) && !TextUtils.isEmpty(stringPass)) {
+                    signup_progress.visibility = View.VISIBLE
+                    mAuth.signInWithEmailAndPassword(stringEmail, stringPass).addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            signup_progress.visibility = View.GONE
+                            val intent = Intent(this@LoginActivity, DashboardActivity::class.java)
+                            startActivity(intent)
+                        } else {
+                            signup_progress.visibility = View.GONE
+                            Toast.makeText(this, "Error: ${task.exception!!.message}", Toast.LENGTH_LONG).show()
+                        }
                     }
+                } else {
+                    signup_progress.visibility = View.GONE
+                    Toast.makeText(this, "Fill all Fields", Toast.LENGTH_LONG).show()
                 }
             } else {
-                signup_progress.visibility = View.GONE
-                Toast.makeText(this, "Fill all Fields", Toast.LENGTH_LONG).show()
+                Toast.makeText(this@LoginActivity, "Please check your internet connection.", Toast.LENGTH_SHORT).show();
             }
         }
 
@@ -99,9 +108,14 @@ class LoginActivity : AppCompatActivity(), AuthenticationListner {
 
     override fun onStart() {
         super.onStart()
-        val currentuser = mAuth.currentUser
-        if (currentuser != null) {
-            sendToLogin()
+
+        if (networkAvailability) {
+            val currentuser = mAuth.currentUser
+            if (currentuser != null) {
+                sendToLogin()
+            }
+        } else {
+            Toast.makeText(this@LoginActivity, "Please check your internet connection.", Toast.LENGTH_SHORT).show();
         }
     }
 

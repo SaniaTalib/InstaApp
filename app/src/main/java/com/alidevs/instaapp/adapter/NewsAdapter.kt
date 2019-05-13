@@ -26,11 +26,6 @@ class NewsAdapter(private val rssObject: RSSObject, var context: Context, privat
             view = itemView.findViewById(R.id.divider)
             newsImage = itemView.findViewById(R.id.news_image)
             newsTitle = itemView.findViewById(R.id.news_title)
-
-            /*itemView.setOnClickListener {
-                Log.d("#Trigeradapter","On Click")
-                listener.onItemClicked(rssObject.items[adapterPosition],adapterPosition)
-            }*/
         }
     }
 
@@ -71,22 +66,3 @@ class NewsAdapter(private val rssObject: RSSObject, var context: Context, privat
         fun onItemClicked(item: Item, position: Int)
     }
 }
-
-
-/*
-
-fun addFragment(fragment: Fragment, addToBackStack: Boolean, tag: String) {
-        val manager = supportFragmentManager
-        val ft = manager.beginTransaction()
-
-        if (addToBackStack) {
-            ft.addToBackStack(tag)
-        }
-        val ldf = fragment
-        val args = Bundle()
-        ldf.arguments = args
-        args.putString("url", item)
-        ft.replace(R.id.fragment_container, fragment, tag)
-        ft.commitAllowingStateLoss()
-
-    }*/

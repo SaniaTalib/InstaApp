@@ -3,8 +3,10 @@ package com.alidevs.instaapp.activity
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.widget.Toast
 import com.alidevs.instaapp.R
 import com.alidevs.instaapp.model.WatchesModel
+import com.alidevs.instaapp.utils.Utils
 import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -18,6 +20,8 @@ class WatchesDetailActivity : AppCompatActivity() {
     private lateinit var storageReference: StorageReference
     private lateinit var firestore: FirebaseFirestore
     private lateinit var firebaseAuth: FirebaseAuth
+    val networkAvailability : Boolean
+        get() = Utils.isNetworkAvailable(applicationContext)
 
     private var user_id: String = ""
     private var brand: String = ""
@@ -47,10 +51,12 @@ class WatchesDetailActivity : AppCompatActivity() {
         actionBar.setDisplayShowHomeEnabled(true)
         actionBar.setDisplayUseLogoEnabled(true)
         //Init components
-        firebaseAuth = FirebaseAuth.getInstance()
-        user_id = firebaseAuth.currentUser!!.uid
-        firestore = FirebaseFirestore.getInstance()
-        storageReference = FirebaseStorage.getInstance().reference
+        if (networkAvailability){
+            firebaseAuth = FirebaseAuth.getInstance()
+            user_id = firebaseAuth.currentUser!!.uid
+            firestore = FirebaseFirestore.getInstance()
+            storageReference = FirebaseStorage.getInstance().reference
+        }
         posts_list = ArrayList()
         val bundle = intent.extras
 
@@ -120,9 +126,13 @@ class WatchesDetailActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        val currentUser = firebaseAuth.currentUser?.uid
-        if (currentUser == null) {
-            sendToLogin()
+        if (networkAvailability){
+            val currentUser = firebaseAuth.currentUser?.uid
+            if (currentUser == null) {
+                sendToLogin()
+            }
+        }else{
+            Toast.makeText(this@WatchesDetailActivity, "Please check your internet connection.", Toast.LENGTH_SHORT).show();
         }
     }
 

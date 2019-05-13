@@ -1,11 +1,13 @@
 package com.alidevs.instaapp.activity
 
 import android.content.Intent
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.preference.PreferenceManager
+import android.support.v7.app.AppCompatActivity
+import android.widget.Toast
 import com.alidevs.instaapp.R
 import com.alidevs.instaapp.utils.AppPreferences
+import com.alidevs.instaapp.utils.Utils
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.activity_create_new_login.*
 
@@ -13,11 +15,15 @@ class CreateNewLoginActivity : AppCompatActivity() {
 
     private lateinit var utils: AppPreferences
     private lateinit var mAuth: FirebaseAuth
+    val networkAvailability: Boolean
+        get() = Utils.isNetworkAvailable(applicationContext)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_new_login)
-        mAuth = FirebaseAuth.getInstance()
+        if (networkAvailability) {
+            mAuth = FirebaseAuth.getInstance()
+        }
         var t = Thread(Runnable {
             var getPrefs = PreferenceManager
                 .getDefaultSharedPreferences(baseContext);
@@ -25,7 +31,7 @@ class CreateNewLoginActivity : AppCompatActivity() {
             //  Create a new boolean and preference and set it to true
             var isFirstStart = getPrefs.getBoolean("firstStart", true);
 
-            if (isFirstStart){
+            if (isFirstStart) {
                 val intent = Intent(this@CreateNewLoginActivity, OnBoardActivity::class.java)
                 runOnUiThread(Runnable {
                     startActivity(intent)
@@ -47,12 +53,12 @@ class CreateNewLoginActivity : AppCompatActivity() {
         utils = AppPreferences(this)
 
         login_btn.setOnClickListener {
-            val intent =Intent(this, LoginActivity::class.java)
+            val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
         }
 
         create_acc_btn.setOnClickListener {
-            val intent= Intent(this, SignupActivity::class.java)
+            val intent = Intent(this, SignupActivity::class.java)
             startActivity(intent)
         }
     }
@@ -64,10 +70,15 @@ class CreateNewLoginActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        val currentuser = mAuth.currentUser
-        if (currentuser != null) {
-            sendToLogin()
+        if (networkAvailability){
+            val currentuser = mAuth.currentUser
+            if (currentuser != null) {
+                sendToLogin()
+            }
+        }else{
+            Toast.makeText(this@CreateNewLoginActivity, "Please check your internet connection.", Toast.LENGTH_SHORT).show();
         }
+
     }
 
 }

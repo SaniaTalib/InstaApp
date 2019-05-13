@@ -14,6 +14,7 @@ import com.alidevs.instaapp.adapter.ViewPagerAdapter
 import com.alidevs.instaapp.fragment.HomeFragment
 import com.alidevs.instaapp.fragment.MyWatchesFragment
 import com.alidevs.instaapp.fragment.SettingsFragment
+import com.alidevs.instaapp.utils.Utils
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
@@ -27,6 +28,8 @@ class DashboardActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     private lateinit var firebaseAuth: FirebaseAuth
     private lateinit var user_id: String
     var doubleBackToExitPressedOnce = false
+    val networkAvailability : Boolean
+        get() = Utils.isNetworkAvailable(applicationContext)
 
 
     override fun onCreate(savedInstanceState: Bundle?) {

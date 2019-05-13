@@ -8,8 +8,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import com.alidevs.instaapp.R
 import com.alidevs.instaapp.model.PostsModel
+import com.alidevs.instaapp.utils.Utils
 import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -20,6 +22,8 @@ class LeaderBoardAdapter(var context: Context, var list: MutableList<PostsModel>
 
     private var firebaseFirestore: FirebaseFirestore? = null
     private var firebaseAuth: FirebaseAuth? = null
+    val networkAvailability : Boolean
+        get() = Utils.isNetworkAvailable(context)
 
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -29,8 +33,10 @@ class LeaderBoardAdapter(var context: Context, var list: MutableList<PostsModel>
         var userName: TextView = itemView.findViewById(R.id.user_name)
 
         init {
-            firebaseFirestore = FirebaseFirestore.getInstance()
-            firebaseAuth = FirebaseAuth.getInstance()
+            if (networkAvailability){
+                firebaseFirestore = FirebaseFirestore.getInstance()
+                firebaseAuth = FirebaseAuth.getInstance()
+            }
         }
     }
 
@@ -49,18 +55,22 @@ class LeaderBoardAdapter(var context: Context, var list: MutableList<PostsModel>
 
 
         //Get Likes Count
-        firebaseFirestore!!.collection("Posts/$blogpostID/Likes").limit(10)
-            .addSnapshotListener { queryDocumentSnapshots, e ->
-                if (queryDocumentSnapshots != null) {
-                    if (!queryDocumentSnapshots.isEmpty) {
-                        val count = queryDocumentSnapshots.size()
-                        holder.txtLikes.text = "$count Likes"
-                        Log.d("#Count", "$count Likes")
-                    } else {
-                        holder.txtLikes.text = "0 Likes"
+        if (networkAvailability){
+            firebaseFirestore!!.collection("Posts/$blogpostID/Likes").limit(10)
+                .addSnapshotListener { queryDocumentSnapshots, e ->
+                    if (queryDocumentSnapshots != null) {
+                        if (!queryDocumentSnapshots.isEmpty) {
+                            val count = queryDocumentSnapshots.size()
+                            holder.txtLikes.text = "$count Likes"
+                            Log.d("#Count", "$count Likes")
+                        } else {
+                            holder.txtLikes.text = "0 Likes"
+                        }
                     }
                 }
-            }
+        }else{
+            Toast.makeText(context, "Please check your internet connection.", Toast.LENGTH_SHORT).show();
+        }
 
         Glide.with(holder.itemView.context)
             .load(item.image_url)

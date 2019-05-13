@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.widget.Toast
 import com.alidevs.instaapp.R
+import com.alidevs.instaapp.utils.Utils
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
@@ -15,6 +16,8 @@ import kotlinx.android.synthetic.main.activity_forgot_password.*
 class ForgotPasswordActivity : AppCompatActivity() {
 
     lateinit var mAuth: FirebaseAuth
+    val networkAvailability : Boolean
+        get() = Utils.isNetworkAvailable(applicationContext)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,15 +35,21 @@ class ForgotPasswordActivity : AppCompatActivity() {
         actionBar.setDisplayShowHomeEnabled(true)
         actionBar.setDisplayUseLogoEnabled(true)
 
-        mAuth = FirebaseAuth.getInstance()
+        if (networkAvailability){
+            mAuth = FirebaseAuth.getInstance()
+        }
 
         send_email_btn.setOnClickListener {
-            val email = forgot_email.text.toString().trim()
-            if (email.isEmpty()) {
-                Toast.makeText(this, "Enter valid Email Address....", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
+            if (networkAvailability){
+                val email = forgot_email.text.toString().trim()
+                if (email.isEmpty()) {
+                    Toast.makeText(this, "Enter valid Email Address....", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
+                forgotPassword(email)
+            }else{
+                Toast.makeText(this@ForgotPasswordActivity, "Please check your internet connection.", Toast.LENGTH_SHORT).show();
             }
-            forgotPassword(email)
         }
     }
 

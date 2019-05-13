@@ -7,6 +7,7 @@ import android.text.TextUtils
 import android.view.View
 import android.widget.Toast
 import com.alidevs.instaapp.R
+import com.alidevs.instaapp.utils.Utils
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
@@ -17,6 +18,8 @@ class SignupActivity : AppCompatActivity() {
     private lateinit var mAuth: FirebaseAuth
     private lateinit var firestore: FirebaseFirestore
     private var user_id: String = ""
+    val networkAvailability: Boolean
+        get() = Utils.isNetworkAvailable(applicationContext)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,37 +37,44 @@ class SignupActivity : AppCompatActivity() {
         actionBar.setLogo(R.drawable.ic_logo)
         actionBar.setDisplayUseLogoEnabled(true)
 
-        mAuth = FirebaseAuth.getInstance()
-        firestore = FirebaseFirestore.getInstance()
+        if (networkAvailability) {
+            mAuth = FirebaseAuth.getInstance()
+            firestore = FirebaseFirestore.getInstance()
+        }
 
 
         signup_button.setOnClickListener {
-            val email = signup_email.text.toString().trim()
-            val pass = signup_password.text.toString().trim()
-            val c_pass = signup_cnfirm_password.text.toString().trim()
-            val name = signup_user_name.text.toString().trim()
-            if (!TextUtils.isEmpty(email) && !TextUtils.isEmpty(pass) && !TextUtils.isEmpty(c_pass) && !TextUtils.isEmpty(
-                    name
-                )
-            ) {
-                if (pass == c_pass) {
-                    signup_progress.visibility = View.VISIBLE
-                    mAuth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener { task ->
-                        if (task.isSuccessful) {
-                            user_id = mAuth.currentUser?.uid!!
-                            storeDataToFireStore()
-                        } else {
-                            signup_progress.visibility = View.GONE
-                            Toast.makeText(this, "Error: ${task.exception!!.message}", Toast.LENGTH_LONG).show()
+            if (networkAvailability) {
+                val email = signup_email.text.toString().trim()
+                val pass = signup_password.text.toString().trim()
+                val c_pass = signup_cnfirm_password.text.toString().trim()
+                val name = signup_user_name.text.toString().trim()
+                if (!TextUtils.isEmpty(email) && !TextUtils.isEmpty(pass) && !TextUtils.isEmpty(c_pass) && !TextUtils.isEmpty(
+                        name
+                    )
+                ) {
+                    if (pass == c_pass) {
+                        signup_progress.visibility = View.VISIBLE
+                        mAuth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener { task ->
+                            if (task.isSuccessful) {
+                                user_id = mAuth.currentUser?.uid!!
+                                storeDataToFireStore()
+                            } else {
+                                signup_progress.visibility = View.GONE
+                                Toast.makeText(this, "Error: ${task.exception!!.message}", Toast.LENGTH_LONG).show()
+                            }
                         }
+                    } else {
+                        signup_progress.visibility = View.GONE
+                        Toast.makeText(this, "Passwords are not matching", Toast.LENGTH_SHORT).show()
                     }
                 } else {
                     signup_progress.visibility = View.GONE
-                    Toast.makeText(this, "Passwords are not matching", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "All fields are mandatory", Toast.LENGTH_SHORT).show()
                 }
             } else {
-                signup_progress.visibility = View.GONE
-                Toast.makeText(this, "All fields are mandatory", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@SignupActivity, "Please check your internet connection.", Toast.LENGTH_SHORT)
+                    .show();
             }
         }
 
@@ -103,9 +113,13 @@ class SignupActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        val currentuser = mAuth.currentUser
-        if (currentuser != null) {
-            sendToLogin()
+        if (networkAvailability) {
+            val currentuser = mAuth.currentUser
+            if (currentuser != null) {
+                sendToLogin()
+            }
+        } else {
+            Toast.makeText(this@SignupActivity, "Please check your internet connection.", Toast.LENGTH_SHORT).show();
         }
     }
 }

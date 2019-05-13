@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.widget.Toast
 import com.alidevs.instaapp.R
+import com.alidevs.instaapp.utils.Utils
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -17,6 +18,8 @@ class UpdatePasswordActivity : AppCompatActivity() {
 
     private lateinit var mAuth: FirebaseAuth
     private lateinit var firestore: FirebaseFirestore
+    val networkAvailability : Boolean
+        get() = Utils.isNetworkAvailable(applicationContext)
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -25,8 +28,10 @@ class UpdatePasswordActivity : AppCompatActivity() {
         setSupportActionBar(update_password_toolbar)
         val actionBar = supportActionBar
 
-        mAuth = FirebaseAuth.getInstance()
-        firestore = FirebaseFirestore.getInstance()
+        if (networkAvailability){
+            mAuth = FirebaseAuth.getInstance()
+            firestore = FirebaseFirestore.getInstance()
+        }
 
         update_password_toolbar.setNavigationIcon(R.drawable.ic_back_arrow)
         update_password_toolbar.setNavigationOnClickListener {
@@ -36,9 +41,12 @@ class UpdatePasswordActivity : AppCompatActivity() {
         actionBar.elevation = 4.0F
         actionBar.setDisplayShowHomeEnabled(true)
         actionBar.setDisplayUseLogoEnabled(true)
-        mAuth = FirebaseAuth.getInstance()
         update_password_btn.setOnClickListener {
-            changePassword()
+            if (networkAvailability){
+                changePassword()
+            }else{
+                Toast.makeText(this@UpdatePasswordActivity, "Please check your internet connection.", Toast.LENGTH_SHORT).show();
+            }
         }
     }
     
@@ -91,9 +99,13 @@ class UpdatePasswordActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        val currentUser = mAuth.currentUser?.uid
-        if (currentUser == null) {
-            sendToLogin1()
+        if (networkAvailability){
+            val currentUser = mAuth.currentUser?.uid
+            if (currentUser == null) {
+                sendToLogin1()
+            }
+        }else{
+            Toast.makeText(this@UpdatePasswordActivity, "Please check your internet connection.", Toast.LENGTH_SHORT).show();
         }
     }
 

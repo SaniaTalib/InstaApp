@@ -8,8 +8,10 @@ import android.view.View
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.Toast
+import com.alidevs.instaapp.App.Companion.context
 import com.alidevs.instaapp.R
 import com.alidevs.instaapp.activity.LoginActivity
+import com.alidevs.instaapp.utils.Utils
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.fragment_add_watches.*
@@ -21,6 +23,8 @@ class NewsDetailActivity : AppCompatActivity() {
     private lateinit var firebaseAuth: FirebaseAuth
     private lateinit var firestore: FirebaseFirestore
     private lateinit var user_id: String
+    val networkAvailability : Boolean
+        get() = Utils.isNetworkAvailable(context!!)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,9 +39,13 @@ class NewsDetailActivity : AppCompatActivity() {
             onBackPressed()
         }
         webView = findViewById(R.id.webView1)
-        firebaseAuth = FirebaseAuth.getInstance()
-        user_id = firebaseAuth.currentUser!!.uid
-        firestore = FirebaseFirestore.getInstance()
+
+        if (networkAvailability){
+            firebaseAuth = FirebaseAuth.getInstance()
+            user_id = firebaseAuth.currentUser!!.uid
+            firestore = FirebaseFirestore.getInstance()
+        }
+
         val bundle = intent.extras
         if (bundle != null) {
             url = bundle.getString("url")!!
@@ -80,10 +88,15 @@ class NewsDetailActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        val currentUser = firebaseAuth.currentUser?.uid
-        if (currentUser == null) {
-            sendToLogin()
+        if (networkAvailability){
+            val currentUser = firebaseAuth.currentUser?.uid
+            if (currentUser == null) {
+                sendToLogin()
+            }
+        }else{
+            Toast.makeText(context, "Please check your internet connection.", Toast.LENGTH_SHORT).show();
         }
+
     }
 
     private fun sendToLogin() {
