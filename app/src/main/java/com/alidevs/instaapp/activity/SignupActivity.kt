@@ -43,26 +43,33 @@ class SignupActivity : AppCompatActivity() {
         }
 
 
+        txt_terms.setOnClickListener {
+            val intent = Intent(this@SignupActivity, TermsConditionsActivity::class.java)
+            startActivity(intent)
+        }
+
+
         signup_button.setOnClickListener {
             if (networkAvailability) {
                 val email = signup_email.text.toString().trim()
                 val pass = signup_password.text.toString().trim()
                 val c_pass = signup_cnfirm_password.text.toString().trim()
                 val name = signup_user_name.text.toString().trim()
-                if (!TextUtils.isEmpty(email) && !TextUtils.isEmpty(pass) && !TextUtils.isEmpty(c_pass) && !TextUtils.isEmpty(
-                        name
-                    )
-                ) {
+                if (!TextUtils.isEmpty(email) && !TextUtils.isEmpty(pass) && !TextUtils.isEmpty(c_pass) && !TextUtils.isEmpty(name)){
                     if (pass == c_pass) {
-                        signup_progress.visibility = View.VISIBLE
-                        mAuth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener { task ->
-                            if (task.isSuccessful) {
-                                user_id = mAuth.currentUser?.uid!!
-                                storeDataToFireStore()
-                            } else {
-                                signup_progress.visibility = View.GONE
-                                Toast.makeText(this, "Error: ${task.exception!!.message}", Toast.LENGTH_LONG).show()
+                        if (checkBox.isChecked){
+                            signup_progress.visibility = View.VISIBLE
+                            mAuth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener { task ->
+                                if (task.isSuccessful) {
+                                    user_id = mAuth.currentUser?.uid!!
+                                    storeDataToFireStore()
+                                } else {
+                                    signup_progress.visibility = View.GONE
+                                    Toast.makeText(this, "Error: ${task.exception!!.message}", Toast.LENGTH_LONG).show()
+                                }
                             }
+                        }else{
+                            Toast.makeText(this, "You must agreed to our terms and conditions.", Toast.LENGTH_LONG).show()
                         }
                     } else {
                         signup_progress.visibility = View.GONE
@@ -74,7 +81,7 @@ class SignupActivity : AppCompatActivity() {
                 }
             } else {
                 Toast.makeText(this@SignupActivity, "Please check your internet connection.", Toast.LENGTH_SHORT)
-                    .show();
+                    .show()
             }
         }
 

@@ -12,6 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import com.alidevs.instaapp.R
+import com.alidevs.instaapp.activity.NewsDetailActivity
 import com.alidevs.instaapp.adapter.NewsAdapter
 import com.alidevs.instaapp.model.Item
 import com.alidevs.instaapp.model.RSSObject

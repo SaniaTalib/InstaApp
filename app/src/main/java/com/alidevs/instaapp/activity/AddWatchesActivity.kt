@@ -230,7 +230,7 @@ class AddWatchesActivity : AppCompatActivity() {
                 }
             } else {
                 Toast.makeText(this@AddWatchesActivity, "Please check your internet connection", Toast.LENGTH_SHORT)
-                    .show();
+                    .show()
             }
         }
     }
@@ -325,7 +325,7 @@ class AddWatchesActivity : AppCompatActivity() {
         val sdf = SimpleDateFormat(myFormat, Locale.US)
         val defaultDate = sdf.format(cal.time)
         val dateSplit = defaultDate!!.split(" ")
-        var dateFinal = ""
+        var dateFinal: String
         dateFinal = when {
             dateSplit[0] == "01" -> "${dateSplit[0]}ST ${dateSplit[1]} ${dateSplit[2]}"
             dateSplit[0] == "02" -> "${dateSplit[0]}ND ${dateSplit[1]} ${dateSplit[2]}"
@@ -345,7 +345,7 @@ class AddWatchesActivity : AppCompatActivity() {
             }
         } else {
             Toast.makeText(this@AddWatchesActivity, "Please check your internet connection.", Toast.LENGTH_SHORT)
-                .show();
+                .show()
         }
     }
 

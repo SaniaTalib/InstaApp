@@ -8,13 +8,13 @@
         android:layout_height="match_parent"
         android:fitsSystemWindows="true"
         tools:openDrawer="start"
-        >
+>
 
     <include
             layout="@layout/app_bar_dashboard"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            />
+    />
 
 
     <android.support.design.widget.NavigationView
@@ -29,12 +29,12 @@
             app:itemBackground="@drawable/drawer_selected_item"
             app:headerLayout="@layout/nav_header_dashboard"
             app:menu="@menu/activity_dashboard2_drawer"
-            >
+    >
 
         <android.support.constraint.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                >
+        >
 
 
             <TextView
@@ -52,7 +52,7 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintVertical_bias="0.0"
                     android:id="@+id/txt_ref"
-                    />
+            />
 
             <ImageView
                     android:layout_width="wrap_content"
@@ -64,7 +64,26 @@
                     android:layout_marginEnd="16dp"
                     app:layout_constraintTop_toTopOf="@+id/txt_ref"
                     app:layout_constraintBottom_toBottomOf="@+id/txt_ref"
-                    />
+            />
+
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Privacy Policy"
+                    android:textColor="@color/grey"
+                    android:fontFamily="@font/montserrat_regular"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginStart="16dp"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintVertical_bias="1.0"
+                    android:id="@+id/txt_privacy"
+                    android:layout_marginEnd="8dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:layout_marginRight="8dp"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    android:layout_marginBottom="32dp"/>
 
         </android.support.constraint.ConstraintLayout>
 

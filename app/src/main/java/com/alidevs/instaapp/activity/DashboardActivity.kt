@@ -11,7 +11,6 @@ import android.view.MenuItem
 import android.view.View
 import com.alidevs.instaapp.R
 import com.alidevs.instaapp.adapter.ViewPagerAdapter
-import com.alidevs.instaapp.fragment.HomeFragment
 import com.alidevs.instaapp.fragment.MyWatchesFragment
 import com.alidevs.instaapp.fragment.SettingsFragment
 import com.alidevs.instaapp.utils.Utils
@@ -28,7 +27,7 @@ class DashboardActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     private lateinit var firebaseAuth: FirebaseAuth
     private lateinit var user_id: String
     var doubleBackToExitPressedOnce = false
-    val networkAvailability : Boolean
+    val networkAvailability: Boolean
         get() = Utils.isNetworkAvailable(applicationContext)
 
 
@@ -57,6 +56,11 @@ class DashboardActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         close.setOnClickListener {
             drawer_layout.closeDrawer(GravityCompat.START)
         }
+
+        txt_privacy.setOnClickListener {
+            val intent = Intent(this@DashboardActivity, TermsConditionsActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     private fun setupViewPager() {
@@ -74,9 +78,6 @@ class DashboardActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         return when (item.itemId) {
             R.id.action_settings -> true
             else -> super.onOptionsItemSelected(item)
@@ -84,20 +85,15 @@ class DashboardActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        // Handle navigation view item clicks here.
         when (item.itemId) {
             R.id.my_home -> {
-               /* setupHomeFragment(HomeFragment())
-                tablayout.visibility = View.VISIBLE*/
-
-                val intent = Intent(this@DashboardActivity,DashboardActivity::class.java)
+                val intent = Intent(this@DashboardActivity, DashboardActivity::class.java)
                 startActivity(intent)
                 finish()
             }
             R.id.my_watches -> {
                 setupHomeFragment(MyWatchesFragment())
                 tablayout.visibility = View.GONE
-                //constraintLayout.visibility = View.GONE
             }
             R.id.settings -> {
                 setupHomeFragment(SettingsFragment())
