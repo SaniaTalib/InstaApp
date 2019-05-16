@@ -16,43 +16,57 @@
             android:supportsRtl="true"
             android:theme="@style/AppTheme"
             tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".activity.EditwatchesActivity">
-        </activity>
-        <activity
-                android:name=".activity.DashboardActivity"
-                android:label="@string/title_activity_dashboard"
-                android:theme="@style/AppTheme.NoActionBar">
-        </activity>
-        <activity android:name=".activity.MainActivity">
-        </activity>
-        <activity android:name=".activity.LoginActivity">
-        </activity>
-        <activity android:name=".activity.SignupActivity">
-        </activity>
-        <activity android:name=".activity.CreateNewLoginActivity">
+
+
+        <activity android:name=".activity.CreateNewLoginActivity"
+                  android:screenOrientation="portrait"
+        >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".activity.OnBoardActivity"/>
-        <activity android:name=".activity.AddWatchesActivity"
 
-                />
-        <activity android:name=".activity.ForgotPasswordActivity"/>
-        <activity android:name=".UpdateEmailActivity"/>
-        <activity android:name=".activity.UpdatePasswordActivity"/>
+        <activity
+                android:name=".activity.DashboardActivity"
+                android:screenOrientation="portrait"
+                android:label="@string/title_activity_dashboard"
+                android:theme="@style/AppTheme.NoActionBar"/>
+
         <activity
                 android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
                 android:theme="@style/Base.Theme.AppCompat"/>
-        <activity android:name=".activity.WatchesDetailActivity"/>
-        <activity android:name=".activity.NewsDetailActivity"/>
-        <activity android:name=".activity.TermsConditionsActivity"/>
+
+
+        <activity android:name=".activity.EditwatchesActivity"
+                  android:screenOrientation="portrait"/>
+        <activity android:name=".activity.MainActivity"
+                  android:screenOrientation="portrait"/>
+        <activity android:name=".activity.LoginActivity"
+                  android:screenOrientation="portrait"/>
+        <activity android:name=".activity.SignupActivity"
+                  android:screenOrientation="portrait"/>
+        <activity android:name=".activity.OnBoardActivity"
+                  android:screenOrientation="portrait"/>
+        <activity android:name=".activity.AddWatchesActivity"
+                  android:screenOrientation="portrait"/>
+        <activity android:name=".activity.ForgotPasswordActivity"
+                  android:screenOrientation="portrait"/>
+        <activity android:name=".UpdateEmailActivity"
+                  android:screenOrientation="portrait"/>
+        <activity android:name=".activity.UpdatePasswordActivity"
+                  android:screenOrientation="portrait"/>
+        <activity android:name=".activity.WatchesDetailActivity"
+                  android:screenOrientation="portrait"/>
+        <activity android:name=".activity.NewsDetailActivity"
+                  android:screenOrientation="portrait"/>
+        <activity android:name=".activity.TermsConditionsActivity"
+                  android:screenOrientation="portrait"/>
 
         <meta-data
                 android:name="preloaded_fonts"
                 android:resource="@array/preloaded_fonts"/>
-    </application>
 
+    </application>
 </manifest>
